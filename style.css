@@ -1,0 +1,219 @@
+body {
+    background: rgb(255, 255, 255);
+    font-family: Roboto;
+    overflow: visible;
+}
+
+.column {
+    padding-top: 20px;
+    padding-left: 50px;
+    width: 40%;
+    float: left;
+    font-size: 50px;
+}
+
+.app {
+    height: 700px;
+    width: 50%;
+    margin: auto;
+    position: absolute;
+    top: 50px;
+    right: 30px;
+    overflow: visible;
+    box-shadow: 0 20px 30px rgba(0, 0, 0, 0.24);
+}
+
+.content {
+    background: rgb(253, 145, 145) url('https://cbwconline.com/IMG/Codepen/Mountains.svg') center 20% no-repeat;
+    background-size: 75px;
+    border-radius: 10px;
+    height: 100%;
+    width: 100%;
+    transition: .3s .2s;
+}
+
+.container__signup {
+    width: 80%;
+    height: 100%;
+    color: #fff;
+}
+
+
+.signup__form {
+    padding: 2.5rem;
+    border-radius: 25px;
+}
+
+.login__form {
+    padding: 2.5rem;
+    border-radius: 25px;
+}
+
+.form-group {
+    width: 100%;
+    margin: auto;
+    height: 100%;
+    position: relative;
+    text-align: start;
+    transition: .3s .6s;
+    padding-top: 20px;
+}
+
+label {
+    text-transform: uppercase;
+    padding-left: 2px;
+    font-weight: 500;
+}
+
+.form-control {
+    border-top: 0;
+    border-right: 0;
+    border-left: 0;
+    border-radius: 8px;
+    border-bottom: rgb(226, 108, 108);
+}
+
+button.expanded {
+    height: 250px;
+    width: 90%;
+    border-radius: 5px;
+    top: 35%;
+}
+
+button.full {
+    height: 100%;
+    width: 100%;
+    top: 0;
+    border-radius: 0;
+    background: #F9F9F9 url('https://cbwconline.com/IMG/Codepen/Background.svg') no-repeat;
+    background-size: 100%;
+    background-position: 0 0; 
+    transition: .5s;
+}
+
+input[type=text] {
+  display: inline-block;
+  background: #F9F9F9;
+  width: 90%;
+  margin: 15px auto;
+  border: 0;
+  border-bottom: 1px solid lightgrey;
+  padding: 12px 0;
+  outline: 0;
+  font-size: 15px;
+  padding-left: 10px;
+}
+
+input[type=password] {
+    display: inline-block;
+    background: #F9F9F9;
+    width: 90%;
+    margin: 15px auto;
+    border: 0;
+    border-bottom: 1px solid lightgrey;
+    padding: 12px 0;
+    outline: 0;
+    font-size: 15px;
+    padding-left: 10px;
+  }
+
+
+.button {
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.23), 0 3px 12px rgba(0, 0, 0, 0.16);
+    background: rgb(255, 255, 255);
+    height: 56px;
+    display: inline-block;
+    width: 120px;
+    margin: auto;
+    border: none;
+    border-radius: 28px;
+    outline: none;
+    overflow: hidden;
+    position: absolute;
+    left: 20px; right: 0;
+    color: rgb(253, 145, 145) ;
+    font: 500 20px Roboto;
+    cursor: pointer;
+    transition: .3s .7s, background .1s .3s;
+}
+
+
+input[type=submit] {
+    width: 100%;
+    border: 0px;
+    position: absolute;
+    top: 0;
+    bottom:0;
+    color: rgb(253, 145, 145);
+    font: 1000 20px Roboto;
+    text-align: center;
+    cursor: pointer;
+    transition: .5s;
+  }
+  
+
+*, *:before, *:after {
+	 box-sizing: border-box;
+}
+ .g-sign-in-button {
+	 margin: 10px;
+	 display: inline-block;
+	 width: 240px;
+	 height: 50px;
+	 background-color: #4285f4;
+	 color: #fff;
+	 border-radius: 1px;
+	 box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .25);
+	 transition: background-color 0.218s, border-color 0.218s, box-shadow 0.218s;
+}
+ .g-sign-in-button:hover {
+	 cursor: pointer;
+	 -webkit-box-shadow: 0 0 3px 3px rgba(66, 133, 244, .3);
+	 box-shadow: 0 0 3px 3px rgba(66, 133, 244, .3);
+}
+ .g-sign-in-button:active {
+	 background-color: #3367d6;
+	 transition: background-color 0.2s;
+}
+ .g-sign-in-button .content-wrapper {
+	 height: 100%;
+	 width: 100%;
+	 border: 1px solid transparent;
+}
+ .g-sign-in-button img {
+	 width: 18px;
+	 height: 18px;
+}
+ .g-sign-in-button .logo-wrapper {
+	 padding: 15px;
+	 background: #fff;
+	 width: 48px;
+	 height: 100%;
+	 border-radius: 1px;
+	 display: inline-block;
+}
+ .g-sign-in-button .text-container {
+	 font-family: Roboto, arial, sans-serif;
+	 font-weight: 500;
+	 letter-spacing: 0.21px;
+	 font-size: 16px;
+	 line-height: 48px;
+	 vertical-align: top;
+	 border: none;
+	 display: inline-block;
+	 text-align: center;
+	 width: 180px;
+}
+
+.google__signup__button {
+  /* background: transparent; */
+  width: 100%;
+  height: 100%;
+  border: none !important;
+  font-size:0;
+  padding-bottom: 10px;
+}
+
+.no__style {
+  all: revert;
+}
