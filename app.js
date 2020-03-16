@@ -11,11 +11,11 @@ var google = new firebase.auth.GoogleAuthProvider();
 
 
 admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-  databaseURL: "https://berri-c0bb3.firebaseio.com"
+    credential: admin.credential.cert(serviceAccount),
+    databaseURL: "https://berri-c0bb3.firebaseio.com"
 });
 
-firebase.initializeApp ({
+firebase.initializeApp({
     apiKey: "AIzaSyD0HmBdRKbpexLH-Z9dk16gjf_9i20-KaY",
     authDomain: "berri-c0bb3.firebaseapp.com",
     databaseURL: "https://berri-c0bb3.firebaseio.com",
@@ -44,7 +44,7 @@ app.use(session({
 
 
 
-app.post('/post-feedback', function (req, res) {
+app.post('/post-feedback', function(req, res) {
     var email = req.body.email;
     var password = req.body.password;
     var repeatPassword = req.body.passwordRepeat;
@@ -52,7 +52,7 @@ app.post('/post-feedback', function (req, res) {
     var lastName = req.body.lastname;
 
     if (email && password && (password == repeatPassword)) {
-      firebase.auth().createUserWithEmailAndPassword(email, password).then(() => {
+        firebase.auth().createUserWithEmailAndPassword(email, password).then(() => {
             console.log("logged in")
             req.session.email = email;
             req.session.loggedin = true;
@@ -75,58 +75,37 @@ app.post('/post-feedback', function (req, res) {
 
 });
 
-app.post ("/googleSignup", function (req, res) {
-
-    firebase.auth().signInWithPopup(google).then(function(result) {
-      // This gives you a Google Access Token. You can use it to access the Google API.
-      var token = result.credential.accessToken;
-      // The signed-in user info.
-      var user = result.user;
-      // ...
-    }).catch(function(error) {
-      // Handle Errors here.
-      var errorCode = error.code;
-      var errorMessage = error.message;
-      // The email of the user's account used.
-      var email = error.email;
-      // The firebase.auth.AuthCredential type that was used.
-      var credential = error.credential;
-      // ..
-    });
-
-});
-
-app.post('/become-tutor', function (req, res) {
+app.post('/become-tutor', function(req, res) {
     var age = req.body.age;
     var subjects = req.body.subjects;
     var city = req.body.city;
 
     if (age && subjects && city) {
-          console.log("signed up as tutor")
-          req.session.tutorLogIn = true;
-          let docRef = db.collection('tutors').doc(req.session.userData["email"])
-          let setInfo = docRef.set({
-              age: age,
-              subjects: subjects,
-              city: city,
-          });
-          docRef = db.collection('users').doc(req.session.userData["email"])
-          setInfo = docRef.update({
-              userType: "tutor"
-          });
-          req.session.userData["userType"] = "tutor"
-          console.log("DONE!")
-          return res.redirect("/profile")
+        console.log("signed up as tutor")
+        req.session.tutorLogIn = true;
+        let docRef = db.collection('tutors').doc(req.session.userData["email"])
+        let setInfo = docRef.set({
+            age: age,
+            subjects: subjects,
+            city: city,
+        });
+        docRef = db.collection('users').doc(req.session.userData["email"])
+        setInfo = docRef.update({
+            userType: "tutor"
+        });
+        req.session.userData["userType"] = "tutor"
+        console.log("DONE!")
+        return res.redirect("/profile")
     }
 
 });
 
-app.post('/loginAuth', function (req, res) {
+app.post('/loginAuth', function(req, res) {
     var email = req.body.email;
     var password = req.body.password;
 
     if (email && password) {
-      firebase.auth().signInWithEmailAndPassword(email, password).then(() => {
+        firebase.auth().signInWithEmailAndPassword(email, password).then(() => {
             console.log("logged in")
             req.session.email = email;
             req.session.loggedin = true;
@@ -135,8 +114,8 @@ app.post('/loginAuth', function (req, res) {
                     if (!doc.exists) {
                         console.log('No such document!');
                     } else {
-                        req.session.userData = doc.data ()
-                        console.log (req.session.userData["first"])
+                        req.session.userData = doc.data()
+                        console.log(req.session.userData["first"])
                         console.log("DONE!")
                         return res.redirect("/profile")
                     }
@@ -153,45 +132,86 @@ app.post('/loginAuth', function (req, res) {
 
 });
 
+app.post("/google_signup", (req, res) => {
+    var id_token = req.body.id_token;
+    // Build Firebase credential with the Google ID token.
+    var credential = firebase.auth.GoogleAuthProvider.credential(id_token);
+
+
+    // Sign in with credential from the Google user.
+    firebase.auth().signInWithCredential(credential).then(authResult => {
+        req.session.loggedin = true;
+        console.log("signed up with google!")
+        var user = authResult.user;
+        var email = user.email;
+        req.session.email = email;
+        var name = user.displayName;
+        var firstName = name.split(" ")[0]
+        var lastName = name.split(" ")[1]
+
+        console.log("first: " + firstName, "last: " + lastName)
+        let docRef = db.collection('users').doc(email)
+        req.session.userData = {
+            email: email,
+            first: firstName,
+            last: lastName,
+            userType: "none"
+        }
+        let setInfo = docRef.set(req.session.userData);
+        console.log("DONE!")
+        return res.redirect("/profile")
+    }).catch((error) => {
+        // Handle Errors here.
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        console.log(errorCode, errorMessage)
+            // The email of the user's account used.
+        var email = error.email;
+        // The firebase.auth.AuthCredential type that was used.
+        var credential = error.credential;
+        // ...
+    });
+})
+
 app.get("/", (req, res) => {
-  if (req.session.loggedin) {
-    res.redirect ("/profile")
-  } else {
-    res.render("signup", { title: "Home" })
-  }
+    if (req.session.loggedin) {
+        res.redirect("/profile")
+    } else {
+        console.log(req.session.loggedin)
+        res.render("signup", { title: "Home" })
+    }
 })
 
 app.get("/login", (req, res) => {
-  if (req.session.loggedin) {
-    res.redirect ("/profile")
-  }
-  else {
-    res.render("login", { title: "Login" })
-  }
-})
-
-app.get ("/profile", (req, res) => {
     if (req.session.loggedin) {
-      res.render ("profile", {title: "Profile", name: req.session.userData["first"], userType: req.session.userData["userType"]})
+        res.redirect("/profile")
     } else {
-      res.redirect ("/");
+        res.render("login", { title: "Login" })
     }
 })
 
-app.get ("/tutorProfile", (req, res) => {
-    if (req.session.loggedin) {
-    res.render ("tutorProfile", {title: "Tutor Profile", name: req.session.userData["first"], userType: req.session.userData["userType"]})
+app.get("/profile", (req, res) => {
+    if (true) { //req.session.loggedin) {
+        res.render("profile", { title: "Profile", name: req.session.userData["first"], userType: req.session.userData["userType"] })
     } else {
-      res.redirect ("/");
+        res.redirect("/");
     }
 })
 
-app.get ("/becomeTutor", (req, res) => {
-  if (req.session.loggedin) {
-    res.render ("becomeTutor", {title: "Become a tutor"})
-  } else {
-    res.redirect ("/")
-  }
+app.get("/tutorProfile", (req, res) => {
+    if (req.session.loggedin) {
+        res.render("tutorProfile", { title: "Tutor Profile", name: req.session.userData["first"], userType: req.session.userData["userType"] })
+    } else {
+        res.redirect("/");
+    }
+})
+
+app.get("/becomeTutor", (req, res) => {
+    if (req.session.loggedin) {
+        res.render("becomeTutor", { title: "Become a tutor" })
+    } else {
+        res.redirect("/")
+    }
 })
 
 app.listen(8000);

@@ -7,15 +7,16 @@ head
   link(rel='stylesheet' type='text/css' href='profile.css')
   link(href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700' rel='stylesheet' type='text/css')
   title Berri Profile
-.column1
-  img.prof.img(src='https://i.ibb.co/HtsTkv5/profile-pic.png' alt='Profile Pic')
-.column2
-  .head
-    h1 Hello, #{name}!
-    p You have signed up for Berri
-    p User Type: #{userType}
-  .button
-    a(href="/becomeTutor") Become a Tutor
-  br
-  .button
-    a(href="/findTutor") Find a Tutor
+.row
+  .column2
+    img.prof.img(src='https://i.ibb.co/HtsTkv5/profile-pic.png' alt='Profile Pic')
+    
+  .column2
+    .head
+      h1 Hello, #{name}!
+      p You have signed up for Berri
+      p User Type: #{userType}
+    .btn-group
+      a(class='button styleTwo' href='/findTutor') Find a Tutor
+      a(class='button styleTwo' href='/becomeTutor') Become a Tutor
+  

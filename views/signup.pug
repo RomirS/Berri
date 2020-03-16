@@ -3,14 +3,14 @@ head
   meta(charset='UTF-8')
   meta(name='viewport' content='width=device-width, initial-scale=1.0')
   meta(http-equiv='X-UA-Compatible' content='ie-edge')
-  meta(name="google-signin-client_id" content="787660474330-r4opmj4qb2tut2v53e4aprc8ohvm4qcr.apps.googleusercontent.com")
+  meta(name="google-signin-client_id" content="787660474330-srqgc8h2jbt1tuicaqrk023lpd4ai1d9.apps.googleusercontent.com")
   title #{title}
   script(src="https://apis.google.com/js/platform.js" async defer)
   link(rel='stylesheet' type='text/css' href='style.css')
   link(href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700' rel='stylesheet' type='text/css')
   title Sign Up for Berri
 .column
-  h1 Go Berri
+  h1#title-text Go Berri
   p Join the ever-increasing market of high school tutors today
 .app
   .content
@@ -36,7 +36,7 @@ head
           label(for='passwordRepeat') Repeat Password
           br
           input#passwordRepeat.form-control(type='password' name='passwordRepeat' placeholder='Repeat Password' required='')
-        .button
+        .button.one
           input(type='submit' value='Sign Up')
         p Already have an account? #[a(href='/login') Sign in]
     br
@@ -53,13 +53,24 @@ head
     
     
   script.
-    var form = document.getElementById ("google-form");
-    document.getElementById("google-button").addEventListener("click", function () {
-      form.submit();
-    });
-    onSignIn {
-      form.submit ();
+    //- var form = document.getElementById ("google-form");
+    //- document.getElementById("google-button").addEventListener("click", function () {
+    //-   form.submit();
+    //- });
+    //- onSignIn {
+    //-   form.submit ();
+    //- }
+    console.log ("hi")
+    var xhttp = new XMLHttpRequest();
+    function onSignIn (googleUser) {
+      var profile = googleUser.getBasicProfile ();
+      console.log ("Name: " + profile.getName())
+      var id_token = googleUser.getAuthResponse().id_token;
+      xhttp.open ("POST", "google_signup", true);
+      xhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+      xhttp.send ("id_token="+id_token);
     }
+
           
 
 script(type='text/javascript' src='app.js')
