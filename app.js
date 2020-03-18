@@ -7,7 +7,10 @@ const admin = require("firebase-admin");
 
 var serviceAccount = require("./serviceAccountKey.json");
 
-var google = new firebase.auth.GoogleAuthProvider();
+var provider = new firebase.auth.GoogleAuthProvider();
+provider.setCustomParameters({
+    prompt: 'select_account consent'
+});
 
 
 admin.initializeApp({
@@ -93,7 +96,7 @@ app.post('/become-tutor', function(req, res) {
         setInfo = docRef.update({
             userType: "tutor"
         });
-        req.session.userData["userType"] = "tutor"
+        req.session.userData["userType"] = "tutor";
         console.log("DONE!")
         return res.redirect("/profile")
     }
@@ -132,11 +135,18 @@ app.post('/loginAuth', function(req, res) {
 
 });
 
-app.post("/google_signup", (req, res) => {
-    var id_token = req.body.id_token;
-    // Build Firebase credential with the Google ID token.
-    var credential = firebase.auth.GoogleAuthProvider.credential(id_token);
+app.post("/logout", (req, res) => {
+    console.log("logging out!")
+    req.session.loggedin = false;
+    firebase.auth().signOut();
+    res.redirect("/")
+})
 
+app.post("/google_signup", (req, res) => {
+    console.log(req.body)
+    var id_token = req.body.idToken;
+    // Build Firebase credential with the Google ID token.
+    var credential = provider.credential(id_token);
 
     // Sign in with credential from the Google user.
     firebase.auth().signInWithCredential(credential).then(authResult => {
@@ -150,16 +160,32 @@ app.post("/google_signup", (req, res) => {
         var lastName = name.split(" ")[1]
 
         console.log("first: " + firstName, "last: " + lastName)
-        let docRef = db.collection('users').doc(email)
-        req.session.userData = {
-            email: email,
-            first: firstName,
-            last: lastName,
-            userType: "none"
-        }
-        let setInfo = docRef.set(req.session.userData);
-        console.log("DONE!")
-        return res.redirect("/profile")
+        let userRef = db.collection('users').doc(email).get()
+        userRef.then(doc => {
+                if (!doc.exists) {
+                    console.log('No such document!');
+                    console.log("SIGNING USER UP")
+                    req.session.userData = {
+                        email: email,
+                        first: firstName,
+                        last: lastName,
+                        userType: "none"
+                    }
+                    let setInfo = docRef.set(req.session.userData);
+                    console.log("DONE!")
+                    return res.status(200).send({ result: 'redirect', url: '/profile' })
+                } else {
+                    req.session.userData = doc.data()
+                    console.log(req.session.userData["first"])
+                    console.log("DONE!")
+                    return res.status(200).send({ result: 'redirect', url: '/profile' })
+                }
+            })
+            .catch(err => {
+                console.log('Error getting document', err);
+            });
+        //return res.redirect("/profile")
+
     }).catch((error) => {
         // Handle Errors here.
         var errorCode = error.code;
@@ -169,7 +195,8 @@ app.post("/google_signup", (req, res) => {
         var email = error.email;
         // The firebase.auth.AuthCredential type that was used.
         var credential = error.credential;
-        // ...
+        console.log("error")
+            // ...
     });
 })
 

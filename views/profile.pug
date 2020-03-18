@@ -10,7 +10,10 @@ head
 .row
   .column2
     img.prof.img(src='https://i.ibb.co/HtsTkv5/profile-pic.png' alt='Profile Pic')
-    
+
+  form#signupformA(action='logout' method='post')
+    .button.one
+        input(type='submit' value='Logout')
   .column2
     .head
       h1 Hello, #{name}!
@@ -18,5 +21,8 @@ head
       p User Type: #{userType}
     .btn-group
       a(class='button styleTwo' href='/findTutor') Find a Tutor
+      br
+      br
+      br
       a(class='button styleTwo' href='/becomeTutor') Become a Tutor
   
