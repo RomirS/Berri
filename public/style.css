@@ -4,7 +4,7 @@ body {
     overflow: visible;
 }
 
-.column {
+.titleHead {
     padding-top: 20px;
     padding-left: 50px;
     width: 40%;
@@ -13,46 +13,40 @@ body {
 }
 
 .app {
-    height: 700px;
+    height: auto;
     width: 50%;
     margin: auto;
     position: absolute;
-    top: 50px;
-    right: 30px;
+    right: 50px;
     overflow: visible;
     box-shadow: 0 20px 30px rgba(0, 0, 0, 0.24);
+    border-radius: 10px;
+}
+
+.signup {
+    margin-top: 5px;
+}
+
+.topSpace {
+    margin-top: 50px;
 }
 
 .content {
     background: rgb(253, 145, 145) url('https://cbwconline.com/IMG/Codepen/Mountains.svg') center 20% no-repeat;
     background-size: 75px;
-    border-radius: 10px;
-    height: 100%;
-    width: 100%;
     transition: .3s .2s;
+    border-radius: 10px;
 }
 
 .container__signup {
-    width: 80%;
-    height: 100%;
     color: #fff;
-}
-
-.signup__form {
     padding: 2.5rem;
     border-radius: 25px;
-}
-
-.login__form {
-    padding: 2.5rem;
-    border-radius: 25px;
-    height: 50%;
 }
 
 .form-group {
-    width: 100%;
-    margin: auto;
-    height: 100%;
+    width: 80%;
+    margin: left;
     position: relative;
     text-align: start;
     transition: .3s .6s;
@@ -62,7 +56,13 @@ body {
 label {
     text-transform: uppercase;
     padding-left: 2px;
-    font-weight: 500;
+    font-weight: 400;
+}
+
+label[for=subject] {
+    color: black;
+    font-weight: 700;
+    font-size: 40px;
 }
 
 .form-control {
@@ -103,37 +103,31 @@ input[type=password] {
 .button {
     box-shadow: 0 3px 12px rgba(0, 0, 0, 0.23), 0 3px 12px rgba(0, 0, 0, 0.16);
     height: 56px;
-    display: inline-block;
     width: 120px;
-    margin: auto;
-    border: none;
     border-radius: 28px;
-    outline: none;
-    overflow: hidden;
-    position: absolute;
-    left: 20px;
-    right: 0;
-    font: 500 20px Roboto;
+    position: relative;
+    margin-right: 20px;
+    font: 1000 20px Roboto;
     cursor: pointer;
-    transition: .3s .7s, background .1s .3s;
-}
-
-.styleOne {
-    background: rgb(255, 255, 255);
-    color: rgb(253, 145, 145);
+    /*transition: .3s .7s, background .1s .3s;*/
 }
 
 input[type=submit] {
     width: 100%;
     border: 0px;
+    border-radius: 28px;
     position: absolute;
     top: 0;
     bottom: 0;
     color: rgb(253, 145, 145);
     font: 1000 20px Roboto;
-    text-align: center;
     cursor: pointer;
     transition: .5s;
+}
+
+.in-line {
+    display: inline-block;
+    vertical-align: middle;
 }
 
 *,
@@ -142,7 +136,7 @@ input[type=submit] {
     box-sizing: border-box;
 }
 
-.g-sign-in-button {
+/*.g-sign-in-button {
     margin: 10px;
     display: inline-block;
     width: 240px;
@@ -199,13 +193,14 @@ input[type=submit] {
 }
 
 .google__signup__button {
-    /* background: transparent; */
+    /* background: transparent; 
     width: 100%;
     height: 100%;
     border: none !important;
     font-size: 0;
     padding-bottom: 10px;
 }
+*/
 
 .no__style {
     all: revert;

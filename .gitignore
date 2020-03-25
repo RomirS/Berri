@@ -148,6 +148,6 @@ temp/
 .history
 
 #SAK#
-serviceAccountKey.json
+serviceAccountKey.*
 
 # End of https://www.gitignore.io/api/node,macos,visualstudiocode

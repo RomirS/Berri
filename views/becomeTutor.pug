@@ -6,12 +6,12 @@ head
   title #{title}
   link(rel='stylesheet' type='text/css' href='style.css')
   link(href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700' rel='stylesheet' type='text/css')
-.column
+.titleHead
   h1 Become a tutor
   p Become a tutor for students
-.app
+.app.topSpace
   .content
-    .container__signup.signup__form
+    .container__signup
       form#signupformA(action='become-tutor' method='post')
         .form-group
           label(for='age') Age
@@ -26,6 +26,6 @@ head
           br
           input#email.form-control(type='text' name='city' placeholder='City' required='')
         .button
-          input(type='submit' value='Sign Up')
+          input(type='submit' value='Submit')
         p Want to find a tutor instead? #[a(href='/findTutor') Find a tutor]
 script(type='text/javascript' src='app.js')

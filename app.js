@@ -5,7 +5,7 @@ const firebase = require("firebase")
 const session = require('express-session')
 const admin = require("firebase-admin");
 
-var serviceAccount = require("./serviceAccountKey.json");
+var serviceAccount = require("../serviceAccountKey.json");
 
 var provider = new firebase.auth.GoogleAuthProvider();
 provider.setCustomParameters({
@@ -64,7 +64,8 @@ app.post('/post-feedback', function(req, res) {
                 email: email,
                 first: firstName,
                 last: lastName,
-                userType: "none"
+                userType: "none",
+                prof_pic: "https://i.ibb.co/HtsTkv5/profile-pic.png"
             }
             let setInfo = docRef.set(req.session.userData);
             console.log("DONE!")
@@ -158,9 +159,11 @@ app.post("/google_signup", (req, res) => {
         var name = user.displayName;
         var firstName = name.split(" ")[0]
         var lastName = name.split(" ")[1]
+        var picURL = user.photoURL;
 
         console.log("first: " + firstName, "last: " + lastName)
-        let userRef = db.collection('users').doc(email).get()
+        let docRef = db.collection('users').doc(email)
+        let userRef = docRef.get()
         userRef.then(doc => {
                 if (!doc.exists) {
                     console.log('No such document!');
@@ -169,7 +172,8 @@ app.post("/google_signup", (req, res) => {
                         email: email,
                         first: firstName,
                         last: lastName,
-                        userType: "none"
+                        userType: "none",
+                        prof_pic: picURL
                     }
                     let setInfo = docRef.set(req.session.userData);
                     console.log("DONE!")
@@ -205,21 +209,22 @@ app.get("/", (req, res) => {
         res.redirect("/profile")
     } else {
         console.log(req.session.loggedin)
-        res.render("signup", { title: "Home" })
+        res.render("login", { title: "Home" })
     }
 })
 
-app.get("/login", (req, res) => {
+app.get("/signup", (req, res) => {
     if (req.session.loggedin) {
         res.redirect("/profile")
     } else {
-        res.render("login", { title: "Login" })
+        res.render("signup", { title: "Login" })
     }
 })
 
 app.get("/profile", (req, res) => {
-    if (true) { //req.session.loggedin) {
-        res.render("profile", { title: "Profile", name: req.session.userData["first"], userType: req.session.userData["userType"] })
+    if (req.session.loggedin) {
+        //console.log(req.session.userData["prof_pic"])
+        res.render("profile", { title: "Profile", name: req.session.userData["first"], userType: req.session.userData["userType"], prof_pic: req.session.userData["prof_pic"] })
     } else {
         res.redirect("/");
     }
@@ -239,6 +244,10 @@ app.get("/becomeTutor", (req, res) => {
     } else {
         res.redirect("/")
     }
+})
+
+app.get("/chat", (req, res) => {
+    
 })
 
 app.listen(8000);

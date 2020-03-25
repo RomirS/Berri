@@ -1,61 +1,79 @@
 body {
-    background: rgb(255, 255, 255);
-    font-family: Roboto;
-    overflow: visible;
+  background: rgb(255, 255, 255);
+  font-family: Roboto;
+  overflow: visible;
 }
 
-.column2 {
-    padding-top: 20px;
-    padding-left: 50px;
-    width: 30%;
-    float: left;
-    font-size: 20px;
-}
-
-.row:after {
-    content: "";
-    display: table;
-    clear: both;
-}
-
-.img {
-    right: 30px;
-    height: auto;
-    width: 300px;
-}
-
-.head h1 p {
-    text-align: center;
-    left: 0px;
-}
-
-a {
-    width: 100%;
-    border: 0px;
-    font: 1000 20px Roboto;
-    text-align: center;
-    text-decoration: none;
-    cursor: pointer;
-    transition: .5s;
-    font-size: small;
-}
-
-.btn-group button{
-  left: 10px;
+.column {
   float: left;
 }
 
-.btn-group:after {
-  content: "";
-  clear: both;
-  display: table;
+.left {
+  width: 30%;
 }
 
-.styleTwo {
-    display: inline-block;
-    background: rgb(253, 145, 145);
-    color: rgb(255, 255, 255);
-    border-radius: 5px;
-    width: 250px;
-    line-height: 280%;
+.right {
+  width: 70%;
+  overflow: visible;
+  margin: left;
+}
+
+.section {
+  box-shadow: 0 20px 30px rgba(0, 0, 0, 0.24);
+  border-radius: 10px;
+  margin: 20px;
+}
+
+#leftSection {
+  padding: 20px 50px 5px 50px;
+}
+
+#rightSection {
+  padding: 1px 20px 45px 20px;
+}
+
+.img {
+  width: 100%;
+  height: auto;
+}
+
+p {
+  text-align: center;
+  padding-bottom: 10px;
+  font-weight: 200;
+}
+
+#logout {
+  border-radius: 28px;
+  margin: auto;
+}
+
+h1 {
+  font-size: 75px;
+  padding-left: 20px;
+}
+
+.btn-group {
+  text-align: left;
+}
+
+#FindTutor,
+#BecomeTutor {
+  display: inline-block;
+  background: rgb(253, 145, 145);
+  color: rgb(255, 255, 255);
+  border-radius: 5px;
+  width: 250px;
+  margin-top: 5px;
+  margin-left: 20px;
+  line-height: 280%;
+}
+
+a {
+  text-decoration: none;
+  text-align: center;
+}
+
+.clear {
+  clear: both;
 }

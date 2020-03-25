@@ -7,22 +7,21 @@ head
   link(rel='stylesheet' type='text/css' href='profile.css')
   link(href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700' rel='stylesheet' type='text/css')
   title Berri Profile
-.row
-  .column2
-    img.prof.img(src='https://i.ibb.co/HtsTkv5/profile-pic.png' alt='Profile Pic')
 
-  form#signupformA(action='logout' method='post')
-    .button.one
-        input(type='submit' value='Logout')
-  .column2
-    .head
-      h1 Hello, #{name}!
-      p You have signed up for Berri
-      p User Type: #{userType}
-    .btn-group
-      a(class='button styleTwo' href='/findTutor') Find a Tutor
-      br
-      br
-      br
-      a(class='button styleTwo' href='/becomeTutor') Become a Tutor
+  .row
+    .column.left
+      .section(id="leftSection")
+        img.prof.img(src=prof_pic alt='Profile Pic')
+        p User Type: #{userType}
+      form#signupformA(action='logout' method='post')
+        .button(id = "logout")
+          input(type='submit' value='Logout')
+    .column.right
+      .section(id="rightSection")
+        h1 Hello, #{name}
+        .btn-group
+          a(class = "button" href='/becomeTutor' id = "BecomeTutor") Become a Tutor
+          a(class = "button" href='/findTutor' id = "FindTutor") Find a Tutor
+      .clear
+
   
