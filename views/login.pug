@@ -18,21 +18,20 @@ head
   h1 Go Berri
   p Join the ever-increasing market of high school tutors today
 .app.topSpace
-  .content
-    .container__signup
-      form#signupformA(action='loginAuth' method='post')
-        .form-group
-          label(for='email') Email
-          br
-          input#email.form-control(type='text' name='email' placeholder='Email Address' required='')
-        .form-group
-          label(for='password') Password
-          br
-          input#password.form-controlawdawd(type='password' name='password' placeholder='Password' required='')
-        .button.in-line(id = "login")
-          input(type='submit' value='Login')
-        div.g-signin2(data-onsuccess="onSignIn" data-prompt="select_account consent").in-line
-        p Don't have an account? #[a(href="/signup") Sign up now!]
+  .container__signup
+    form#signupformA(action='loginAuth' method='post')
+      .form-group
+        label(for='email') Email
+        br
+        input#email.form-control(type='text' name='email' placeholder='Email Address' required='')
+      .form-group
+        label(for='password') Password
+        br
+        input#password.form-controlawdawd(type='password' name='password' placeholder='Password' required='')
+      .button.in-line(id = "login")
+        input(type='submit' value='Login')
+      div.g-signin2(data-onsuccess="onSignIn" data-prompt="select_account consent").in-line
+      p Don't have an account? #[a(href="/signup") Sign up now!]
       
   
   script.
@@ -44,9 +43,10 @@ head
     //-   form.submit ();
     //- }
     //- console.log ("hi")
-    window.onbeforeunload = function(e){
-      gapi.auth2.getAuthInstance().signOut();
-    };
+
+    //- window.onbeforeunload = function(e){
+    //-   gapi.auth2.getAuthInstance().signOut();
+    //- };
     var xhttp = new XMLHttpRequest();
     function onSignIn (googleUser) {
       var profile = googleUser.getBasicProfile ();
@@ -74,6 +74,3 @@ head
       //- xhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
       //- xhttp.send ("id_token="+id_token);
     }
-
-
-script(type='text/javascript' src='app.js')

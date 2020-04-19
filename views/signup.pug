@@ -17,34 +17,33 @@ head
 .titleHead
   h1#title-text Go Berri
   p Join the ever-increasing market of high school tutors today
-.app.signup
-  .content
-    .container__signup
-      form#signupformA(action='post-feedback' method='post')
-        .form-group
-          label(for='firstname') First Name
-          br
-          input#firstname.form-control(type='text' name='firstname' placeholder='First Name' required='')
-        .form-group
-          label(for='lastname') Last Name
-          br
-          input#lastname.form-control(type='text' name='lastname' placeholder='Last Name' required='')
-        .form-group
-          label(for='email') Email
-          br
-          input#email.form-control(type='text' name='email' placeholder='Email Address' required='')
-        .form-group
-          label(for='password') Password
-          br
-          input#password.form-control(type='password' name='password' placeholder='Password' required='')
-        .form-group
-          label(for='passwordRepeat') Repeat Password
-          br
-          input#passwordRepeat.form-control(type='password' name='passwordRepeat' placeholder='Repeat Password' required='')
-        .button.in-line
-          input(type='submit' value='Sign Up')
-        div.g-signin2(data-onsuccess="onSignIn" data-prompt="select_account consent").in-line 
-        p Already have an account? #[a(href='/') Sign in]
+.app
+  .container__signup
+    form#signupformA(action='post-feedback' method='post')
+      .form-group
+        label(for='firstname') First Name
+        br
+        input#firstname.form-control(type='text' name='firstname' placeholder='First Name' required='')
+      .form-group
+        label(for='lastname') Last Name
+        br
+        input#lastname.form-control(type='text' name='lastname' placeholder='Last Name' required='')
+      .form-group
+        label(for='email') Email
+        br
+        input#email.form-control(type='text' name='email' placeholder='Email Address' required='')
+      .form-group
+        label(for='password') Password
+        br
+        input#password.form-control(type='password' name='password' placeholder='Password' required='')
+      .form-group
+        label(for='passwordRepeat') Repeat Password
+        br
+        input#passwordRepeat.form-control(type='password' name='passwordRepeat' placeholder='Repeat Password' required='')
+      .button.in-line
+        input(type='submit' value='Sign Up')
+      div.g-signin2(data-onsuccess="onSignIn" data-prompt="select_account consent").in-line 
+      p Already have an account? #[a(href='/') Sign in]
         
 
   // form#google-form(action="googleSignup", method="post")
@@ -96,5 +95,3 @@ head
       //- xhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
       //- xhttp.send ("id_token="+id_token);
     }
-
-script(type='text/javascript' src='app.js')

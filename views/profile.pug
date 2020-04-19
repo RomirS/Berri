@@ -6,22 +6,81 @@ head
   link(rel='stylesheet' type='text/css' href='style.css')
   link(rel='stylesheet' type='text/css' href='profile.css')
   link(href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700' rel='stylesheet' type='text/css')
+  //script(src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js")
+  //script(src="https://harvesthq.github.io/chosen/chosen.jquery.js")
+  //link(href="https://harvesthq.github.io/chosen/chosen.css" rel="stylesheet" type="text/css")
   title Berri Profile
 
   .row
-    .column.left
-      .section(id="leftSection")
-        img.prof.img(src=prof_pic alt='Profile Pic')
-        p User Type: #{userType}
-      form#signupformA(action='logout' method='post')
-        .button(id = "logout")
-          input(type='submit' value='Logout')
-    .column.right
-      .section(id="rightSection")
-        h1 Hello, #{name}
-        .btn-group
+    .box-1
+      .section
+        #imageSection
+          img.prof.circleCrop(src=prof_pic alt='Profile Pic')
+    .box-2
+      .section
+        #headerSection
+          h1 Hello, #{name}      
+          form#subjectForm(method="GET" action="find-tutor")
+            .dropdown 
+              input(id="chooseSubjectText" type='text' name='chosenSubject' placeholder='What do you need help with?' autocomplete="off")
+              #dropdown-content
+              #goBtn
+                input(type='submit' value='→')
+            br
+            br
+              
+  .row
+    .box-3
+      .section.removePadding
+        #noContent
+          p Looks like you aren't a tutor yet!
           a(class = "button" href='/becomeTutor' id = "BecomeTutor") Become a Tutor
-          a(class = "button" href='/findTutor' id = "FindTutor") Find a Tutor
-      .clear
+        #yesContent
+          h2 YOUR SUBJECTS
+          .center
+            if (subjects instanceof Array)
+              for subject in subjects
+                h3= subject
+            else 
+              h3= subjects
+    .box-4
+      .section.dashboard
+        form#submitForm(method="post" action="messages")
+          input(name="newTutor" value=false style="display:none")
+          a(class="button" id="messagesBtn" href="javascript:{}" onclick="document.getElementById('submitForm').submit();") Messages
+  form#signupformA(action='logout' method='post')
+    .button(id = "fixedButton")
+      input(type='submit' value='Logout')
 
-  
+script.
+  var is_tutor = false;
+  var userType = !{JSON.stringify(userType)}
+  if (userType == "Registered Tutor") {
+    is_tutor = true;
+  }
+  console.log (is_tutor)
+  if (is_tutor) {
+    document.getElementById("noContent").style.display = "none";
+    document.getElementById("yesContent").style.display = "block";
+  } else {
+    document.getElementById("noContent").style.display = "block";
+    document.getElementById("yesContent").style.display = "none";
+  }
+
+  var dropdownContent = document.getElementById("dropdown-content");
+  var tutorSubjects = !{JSON.stringify(tutorSubjects)}
+  var subjectForm = document.getElementById("subjectForm");
+  var inputTextField = document.getElementById("chooseSubjectText");
+  tutorSubjects.forEach(function(subject) {
+    var a = document.createElement('a');
+    a.value = subject;
+    a.appendChild(document.createTextNode(subject));
+    a.addEventListener("click", function(){ 
+      inputTextField.setAttribute("value", ''); 
+      inputTextField.setAttribute("value", a.value); 
+      subjectForm.submit();
+    });
+    dropdownContent.appendChild(a)
+  })
+
+

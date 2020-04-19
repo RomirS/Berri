@@ -13,6 +13,7 @@ body {
 }
 
 .app {
+    background: rgb(253, 145, 145);
     height: auto;
     width: 50%;
     margin: auto;
@@ -21,21 +22,24 @@ body {
     overflow: visible;
     box-shadow: 0 20px 30px rgba(0, 0, 0, 0.24);
     border-radius: 10px;
-}
-
-.signup {
-    margin-top: 5px;
+    top: 10px;
 }
 
 .topSpace {
-    margin-top: 50px;
+    top: 60px;
 }
 
-.content {
-    background: rgb(253, 145, 145) url('https://cbwconline.com/IMG/Codepen/Mountains.svg') center 20% no-repeat;
-    background-size: 75px;
-    transition: .3s .2s;
-    border-radius: 10px;
+.centerForm {
+    background: white;
+    position: relative;
+    margin: auto;
+    width: 80%;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    transform: translateY(30%);
+    box-shadow: 0 0 0 rgba(0, 0, 0, 0.24);
 }
 
 .container__signup {
@@ -45,7 +49,7 @@ body {
 }
 
 .form-group {
-    width: 80%;
+    width: 100%;
     margin: left;
     position: relative;
     text-align: start;
@@ -61,8 +65,12 @@ label {
 
 label[for=subject] {
     color: black;
-    font-weight: 700;
-    font-size: 40px;
+    font-weight: 300;
+    font-size: 80px;
+}
+
+select {
+    width: 90%;
 }
 
 .form-control {
@@ -76,7 +84,7 @@ label[for=subject] {
 input[type=text] {
     display: inline-block;
     background: #F9F9F9;
-    width: 90%;
+    width: 80%;
     margin: 15px auto;
     border: 0;
     border-bottom: 1px solid lightgrey;
@@ -89,7 +97,7 @@ input[type=text] {
 input[type=password] {
     display: inline-block;
     background: #F9F9F9;
-    width: 90%;
+    width: 80%;
     margin: 15px auto;
     border: 0;
     border-bottom: 1px solid lightgrey;
@@ -135,6 +143,7 @@ input[type=submit] {
 *:after {
     box-sizing: border-box;
 }
+
 
 /*.g-sign-in-button {
     margin: 10px;

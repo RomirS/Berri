@@ -5,27 +5,40 @@ head
   meta(http-equiv='X-UA-Compatible' content='ie-edge')
   title #{title}
   link(rel='stylesheet' type='text/css' href='style.css')
+  script(src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js")
+  script(src="https://harvesthq.github.io/chosen/chosen.jquery.js")
+  link(href="https://harvesthq.github.io/chosen/chosen.css", rel="stylesheet", type="text/css")
   link(href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700' rel='stylesheet' type='text/css')
+  
+  
 .titleHead
   h1 Become a tutor
   p Become a tutor for students
 .app.topSpace
-  .content
-    .container__signup
-      form#signupformA(action='become-tutor' method='post')
-        .form-group
-          label(for='age') Age
-          br
-          input#firstname.form-control(type='text' name='age' placeholder='Age' required='')
-        .form-group
-          label(for='subjects') Subjects you can teach
-          br
-          input#lastname.form-control(type='text' name='subjects' placeholder='Subjects' required='')
-        .form-group
-          label(for='email') City
-          br
-          input#email.form-control(type='text' name='city' placeholder='City' required='')
-        .button
-          input(type='submit' value='Submit')
-        p Want to find a tutor instead? #[a(href='/findTutor') Find a tutor]
+  .container__signup
+    form#signupformA(action='become-tutor' method='post')
+      .form-group
+        label(for='age') Age
+        br
+        input#age.form-control(type='text' name='age' placeholder='Age' required='')
+      .form-group
+        label(for='subjects') Subjects you can teach
+        br
+        //- input#subjects.form-control(type='text' name='subjects' placeholder='Subjects' required='')
+        #output
+        select.chosen-select(data-placeholder='Choose subjects ...' name='subjects' multiple='')
+          each subject in tutorSubjects
+            option(value=subject) #{subject}
+
+      .form-group
+        label(for='email') City
+        br
+        input#city.form-control(type='text' name='city' placeholder='City' required='')
+      .button
+        input(type='submit' value='Submit')
+      p Want to find a tutor instead? #[a(href='/findTutor') Find a tutor]
+
 script(type='text/javascript' src='app.js')
+script.
+  document.getElementById('output').innerHTML = location.search;
+  $(".chosen-select").chosen();

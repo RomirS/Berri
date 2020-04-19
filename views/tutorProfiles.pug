@@ -1,0 +1,33 @@
+doctype html
+head
+  meta(charset='UTF-8')
+  meta(name='viewport' content='width=device-width, initial-scale=1.0')
+  meta(http-equiv='X-UA-Compatible' content='ie-edge')
+  title #{title}
+  link(rel='stylesheet' type='text/css' href='style.css')
+  link(rel='stylesheet' type='text/css' href='profile.css')
+  link(rel='stylesheet' type='text/css' href='tutorProfile.css')
+  link(href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700' rel='stylesheet' type='text/css')
+
+.flexContainer
+  .box-1
+    form#retryForm(method="GET" action="retry-tutor")
+      input(name="email" value=tutorUserData["email"] style="display:none")
+      a(class="button" id="noBtn" href="javascript:{}" onclick="document.getElementById('retryForm').submit();") ↻
+  .box-2
+    .section
+        img.prof( src=tutorUserData["prof_pic"] alt='Profile Pic')
+        h1 #{tutorUserData["first"]} #{tutorUserData["last"]}
+        h4 #{tutorData["age"]} year old
+        h4 #{tutorData["city"]}
+        h2 I can help you with...
+        .center
+          if (subjects instanceof Array)
+            for subject in subjects
+              h3= subject
+          else 
+            h3= subjects
+  .box-3
+    form#submitForm(method="post" action="messages")
+      input(name="newTutor" value="true" style="display:none")
+      a(class="button" id="yesBtn" href="javascript:{}" onclick="document.getElementById('submitForm').submit();") ✔

@@ -5,7 +5,9 @@
     "main": "index.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "dev": "nodemon ./app.js"
+        "start": "node ./app.js",
+        "dev": "nodemon ./app.js",
+        "type": "module"
     },
     "keywords": [],
     "author": "",
@@ -20,8 +22,10 @@
         "firebase-admin": "^8.9.2",
         "html": "^1.0.0",
         "jquery": "^3.4.1",
+        "moment": "^2.24.0",
         "mongodb": "^3.5.4",
         "nodemon": "^2.0.2",
-        "pug": "^2.0.4"
+        "pug": "^2.0.4",
+        "socket.io": "^2.3.0"
     }
 }

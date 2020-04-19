@@ -1,0 +1,239 @@
+doctype html
+head
+  meta(charset='UTF-8')
+  meta(name='viewport' content='width=device-width, initial-scale=1.0')
+  meta(http-equiv='X-UA-Compatible' content='ie-edge')
+  title #{title}
+  script(src="//code.jquery.com/jquery-3.4.1.min.js")
+  link(rel='stylesheet' type='text/css' href='style.css')
+  link(rel='stylesheet' type='text/css' href='profile.css')
+  link(rel='stylesheet' type='text/css' href='messages.css')
+  link(href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700' rel='stylesheet' type='text/css')
+
+.section
+  .box-1
+    #searchMenu
+      input(type="text" name="search" placeholder="Search you chats...")
+    #yourTutors
+      .head 
+        h2 YOUR TUTORS
+    #yourStudents
+      .head 
+        h2 YOUR STUDENTS
+  .box-2
+    .chat-header
+      img.circleCrop#imgHeading(src=userData.prof_pic alt='Profile Pic')
+      h5#chatHeading Romir Singla
+    .chat-messages
+    .chat-form-container
+      form#chat-form
+        input(id="textmsg" type="text" name="chat" placeholder="Aa" autocomplete="off")
+        input#send(type='submit' value='↑')
+form#signupformA(action='/' method='get')
+  .button.in-line(id = "fixedButton")
+    input(type='submit' value='Return Home')
+
+script(src="/socket.io/socket.io.js")
+script.
+  const socket = io();
+  var userData = !{JSON.stringify(userData)};
+  var tutorChatData = !{JSON.stringify(tutorChatData)};
+  var studentChatData = !{JSON.stringify(studentChatData)};
+  var personalTutorData = !{JSON.stringify(personalTutorData)};
+  var selectedRoom;
+  var chatData;
+
+  //Outputs list of tutors under "Your Tutors"
+  var myTutors = userData.myTutors;
+  var yourTutors = document.getElementById("yourTutors");
+  renderChats(myTutors, yourTutors, tutorChatData);
+
+  //Ouputs list of students under "Your Students"
+  if (userData.userType == "Registered Tutor") {
+    $( "#yourStudents" ).css("display", "block")
+    var myStudents = personalTutorData.myStudents;
+    var yourStudents = document.getElementById("yourStudents");
+    renderChats(myStudents, yourStudents, studentChatData)
+  }
+
+  function renderChats(arrayObj, divElement, objChatData) {
+    var roomID;
+    var tutor;
+    if (divElement.id == "yourTutors") {
+      tutor = true;
+    } else {
+      tutor = false;
+    }
+    arrayObj.forEach(obj => {
+      let fname = obj.first;
+      let lname = obj.last;
+      let subject = obj.subjectChosen
+
+      let chat = document.createElement("div");
+      chat.classList.add("chat");
+      chat.innerHTML = `<img src=${obj.prof_pic} class="circleCrop" alt="Profile Pic"><h5>${fname} ${lname}</h5> <p>for ${subject}</p>`
+      divElement.append(chat);
+
+      if (tutor) {
+        roomID = `${obj.email}?${userData.email}`;
+      } else {
+        roomID = `${userData.email}?${obj.email}`;
+      }
+      chat.id = `${roomID}`;
+      socket.emit('joinRoom', chat.id);
+
+      chat.addEventListener("click", (e) => {
+        if (selectedRoom != chat.id) {
+          document.getElementById('chatHeading').innerText = `${fname} ${lname}`;
+          document.getElementById('imgHeading').src = obj.prof_pic;
+          $(".chat-messages").empty();
+          document.getElementById(`${selectedRoom}`).style.background = "white";
+          document.getElementById(`${selectedRoom}`).addEventListener('mouseenter', (e) => {
+            e.target.classList.add('chat_hover');
+          });
+          document.getElementById(`${selectedRoom}`).addEventListener('mouseleave', (e) => {
+            e.target.classList.remove('chat_hover');
+          });
+          document.getElementById(`${chat.id}`).style.background = "rgba(253, 145, 145, 0.486)";
+          selectedRoom = chat.id;
+
+          //Load chat data for clicked room
+          if (tutor) {
+            chatData = objChatData.filter(chatObj => {
+              return chatObj.tutor === obj.email
+            });
+          } else {
+            chatData = objChatData.filter(chatObj => {
+              return chatObj.student === obj.email
+            });
+          }
+          if (chatData.length != 0) {
+            chatData[0].chats.forEach(chatObj =>{
+              var message = {
+                chat: chatObj.chat,
+                sender: chatObj.sender,
+                prof_pic: chatObj.prof_pic,
+                time: chatObj.time
+              }
+              outputMessage(message);
+            });
+          }
+
+          var chatroom = {
+            id: chat.id,
+            useremail: userData.email,
+            prof_pic: userData.prof_pic
+          }
+          socket.emit('currentRoom', chatroom);
+        }
+      });
+    });
+  }
+
+  //Sends message to server when form is submitted
+  let chatForm = $('#chat-form')[0];
+  let chatMessages = document.querySelector('.chat-messages');
+  let msg = $('#textmsg')[0];
+  msg.addEventListener('input', (e) => {
+    $('#send').css("display", "block");
+  });
+  chatForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (msg.value != '') {
+      socket.emit('chatMessage', msg.value);
+      msg.value = "";
+      $('#send').css("display", "none");
+    }
+  })
+
+  //Handles message that has been sent to user
+  socket.on('message', message => {
+    if (message.room == selectedRoom) {
+      saveNewMessage(message);
+      outputMessage(message);
+    } else {
+      saveNewMessage(message);
+    }
+  })
+
+  //outputs new message to front end
+  function outputMessage(message) {
+    let div = document.createElement('div');
+    div.classList.add('message');
+    if (message.sender == userData.email) {
+      div.setAttribute('id', 'userMsg');
+      div.innerHTML = `<p class="text">${message.chat}</p> <p class="meta"><span>${message.time}</span></p>`;
+    } else {
+      div.setAttribute('id', 'otherMsg');
+      div.innerHTML = `<img src=${message.prof_pic} id = "chatpic" class = "circleCrop" alt="Chat Profile Pic"><p class="text">${message.chat}</p> <p class="meta"><span>${message.time}</span></p>`;
+    }
+    chatMessages.append(div);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+
+  //saves message to browser side data
+  function saveNewMessage(message) {
+    if(chatData.length == 0) {
+      chatData[0].chats = [];
+    }
+    var msg = {
+      chat: message.text,
+      sender: message.username,
+      time: message.time
+    }
+    //whenever user messages or person in the same room as user messages, this happens
+    if (message.room == selectedRoom) {
+      chatData[0].chats.push(msg);
+    } else {
+      //finds id of person that is not in the same room as user that has sent message
+      var ret = message.room.replace(`${userData.email}`,'');
+      ret = ret.replace('?', '');
+      //finds reference to user's browser data for the specific chat that has been messaged
+      let bgChatData = tutorChatData.filter(obj => {
+        return obj.tutor === ret
+      });
+      if (bgChatData.length == 0 && userData.userType == "Registered Tutor") {
+        bgChatData = studentChatData.filter(obj => {
+          return obj.student === ret
+        });
+      } else {
+        console.log("Could not find chat reference");
+      }
+      console.log(bgChatData);
+      bgChatData[0].chats.push(msg);
+    }
+  }
+
+  //Join default room
+  let firstTutor = myTutors[0]
+  var executed = false;
+  if (!executed) {
+    executed = true;
+    document.getElementById('chatHeading').innerText = (`${firstTutor.first} ${firstTutor.last}`);
+    document.getElementById('imgHeading').src = firstTutor.prof_pic;
+    selectedRoom = `${firstTutor.email}?${userData.email}`;
+    document.getElementById(`${selectedRoom}`).style.background = "rgba(253, 145, 145, 0.486)";
+
+    chatData = tutorChatData.filter(obj => {
+      return obj.tutor === firstTutor.email
+    });
+    
+    if (chatData.length != 0) {
+      chatData[0].chats.forEach(chatObj =>{
+        var message = {
+          chat: chatObj.chat,
+          sender: chatObj.sender,
+          prof_pic: chatObj.prof_pic,
+          time: chatObj.time
+        }
+        outputMessage(message);
+      });
+    }
+
+    var chatroom = {
+      id: selectedRoom,
+      useremail: userData.email,
+      prof_pic: userData.prof_pic
+    }
+    socket.emit('currentRoom', chatroom);
+  }
