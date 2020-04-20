@@ -5,10 +5,13 @@ const path = require('path');
 const http = require('http');
 const bodyParser = require('body-parser');
 
+const signup = require("./src/signup");
 const postFeedback = require("./src/postFeedback");
 const loginAuth = require("./src/loginAuth");
 const googleSignup = require("./src/googleSignup");
 const logout = require("./src/logout");
+const home = require("./src/home");
+const profile = require("./src/profile");
 
 const app = express();
 const db = firebaseConfig();
@@ -45,79 +48,14 @@ function shuffle(array) {
     return array;
 }
 
+app.get("/signup", function(req,res){signup(req, res)});
 app.post('/post-feedback', function(req,res){postFeedback(req, res)});
-
 app.post('/loginAuth', function(req,res){loginAuth(req, res)});
+app.post('/googleSignup', function(req,res){googleSignup(req, res)});
+app.post('/logout', function(req,res){logout(req, res)});
+app.get("/", function(req,res){home(req, res)});
 
-app.post('/googleSignup', function(req,res){googleSignup(req, res)})
-
-app.post('/logout', function(req,res){logout(req, res)})
-
-app.get("/", (req, res) => {
-    if (req.session.loggedin) {
-        res.redirect("/profile")
-    } else {
-        console.log(req.session.loggedin)
-        res.render("login", { title: "Home" })
-    }
-})
-
-app.get("/signup", (req, res) => {
-    if (req.session.loggedin) {
-        res.redirect("/profile")
-    } else {
-        res.render("signup", { title: "Login" })
-    }
-})
-
-app.get("/profile", (req, res) => {
-    if (req.session.loggedin) {
-        username = req.session.userData["first"];
-        useremail = req.session.userData["email"];
-        let subjectRef = db.collection('subjects').doc("subjects").get();
-        subjectRef.then(doc => {
-            if (!doc.exists) {
-                console.log('No such document!');
-            } else {
-                req.session.tutorBlacklist = []
-                req.session.tutorBlacklist.push(req.session.userData["email"])
-                req.session.tutorSubjects = doc.data()["all_subjects"]
-                req.session.save()
-            }
-        }).catch(err => {
-            console.log('Error getting document', err);
-        });
-
-        let grabTutor = db.collection('tutors').doc(req.session.userData["email"]).get();
-        grabTutor.then(tutorDoc => {
-            if (!tutorDoc.exists) {
-                console.log('NOT TUTOR');
-                res.render("profile", {
-                    title: "Profile",
-                    name: req.session.userData["first"],
-                    userType: req.session.userData["userType"],
-                    prof_pic: req.session.userData["prof_pic"],
-                    tutorSubjects: req.session.tutorSubjects
-                })
-            } else {
-                req.session.tutorData = tutorDoc.data()
-                res.render("profile", {
-                    title: "Profile",
-                    name: req.session.userData["first"],
-                    userType: req.session.userData["userType"],
-                    prof_pic: req.session.userData["prof_pic"],
-                    subjects: req.session.tutorData["subjects"],
-                    tutorSubjects: req.session.tutorSubjects
-                })
-            }
-        }).catch(err => {
-            console.log('Error getting document', err);
-        });
-
-    } else {
-        res.redirect("/");
-    }
-})
+app.get("/profile", function(req,res){profile(req, res)})
 
 app.get("/becomeTutor", (req, res) => {
     if (req.session.loggedin) {
