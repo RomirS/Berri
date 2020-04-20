@@ -1,19 +1,19 @@
-const firebase = require("firebase");
+const firebaseConfig = require("./utils/firebaseConfig");
 const express = require('express');
+const session = require('express-session');
 const path = require('path');
 const http = require('http');
 const bodyParser = require('body-parser');
-const session = require('express-session')
-const firebaseConfig = require("./utils/firebaseConfig");
-const providerConfig = require("./utils/providerConfig");
 
 const postFeedback = require("./src/postFeedback");
-
-const PORT = process.env.PORT || 3000;
+const loginAuth = require("./src/loginAuth");
+const googleSignup = require("./src/googleSignup");
+const logout = require("./src/logout");
 
 const app = express();
 const db = firebaseConfig();
-const provider = providerConfig();
+
+const PORT = process.env.PORT || 3000;
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.resolve(__dirname, 'public')));
@@ -31,121 +31,27 @@ app.use(session({
 
 function shuffle(array) {
     let counter = array.length;
-
     // While there are elements in the array
     while (counter > 0) {
         // Pick a random index
         let index = Math.floor(Math.random() * counter);
-
         // Decrease counter by 1
         counter--;
-
         // And swap the last element with it
         let temp = array[counter];
         array[counter] = array[index];
         array[index] = temp;
     }
-
     return array;
 }
 
 app.post('/post-feedback', function(req,res){postFeedback(req, res)});
 
-app.post('/loginAuth', function(req, res) {
-    var email = req.body.email;
-    var password = req.body.password;
+app.post('/loginAuth', function(req,res){loginAuth(req, res)});
 
-    if (email && password) {
-        firebase.auth().signInWithEmailAndPassword(email, password).then(() => {
-            console.log("logged in")
-            req.session.email = email;
-            req.session.loggedin = true;
-            let userRef = db.collection('users').doc(email).get();
-            userRef.then(doc => {
-                if (!doc.exists) {
-                    console.log('No such document!');
-                } else {
-                    req.session.userData = doc.data()
-                    console.log("DONE!")
-                    return res.redirect("/profile")
-                }
-            }).catch(err => {
-                console.log('Error getting document', err);
-            });
-        }).catch((err) => {
-            console.log(err)
-            return res.send(err.message)
-        })
-    }
+app.post('/googleSignup', function(req,res){googleSignup(req, res)})
 
-});
-
-app.post("/google_signup", (req, res) => {
-    var id_token = req.body.idToken;
-    // Build Firebase credential with the Google ID token.
-    var credential = provider.credential(id_token);
-
-    // Sign in with credential from the Google user.
-    firebase.auth().signInWithCredential(credential).then(authResult => {
-        req.session.loggedin = true;
-        console.log("signed up with google!")
-        var user = authResult.user;
-        var email = user.email;
-        req.session.email = email;
-        var name = user.displayName;
-        var firstName = name.split(" ")[0]
-        var lastName = name.split(" ")[1]
-        var picURL = user.photoURL;
-
-        console.log("first: " + firstName, "last: " + lastName)
-        let docRef = db.collection('users').doc(email);
-        let userRef = docRef.get()
-        userRef.then(doc => {
-                if (!doc.exists) {
-                    console.log("SIGNING USER UP")
-                    req.session.userData = {
-                        email: email,
-                        first: firstName,
-                        last: lastName,
-                        userType: "Student",
-                        prof_pic: picURL,
-                        myTutors: []
-                    }
-                    let setInfo = docRef.set(req.session.userData);
-                    console.log("DONE!")
-                    return res.status(200).send({ result: 'redirect', url: '/profile' })
-                } else {
-                    req.session.userData = doc.data()
-                    console.log(req.session.userData["first"])
-                    console.log("DONE!")
-                    return res.status(200).send({ result: 'redirect', url: '/profile' })
-                }
-            })
-            .catch(err => {
-                console.log('Error getting document', err);
-            });
-        //return res.redirect("/profile")
-
-    }).catch((error) => {
-        // Handle Errors here.
-        var errorCode = error.code;
-        var errorMessage = error.message;
-        console.log(errorCode, errorMessage)
-            // The email of the user's account used.
-        var email = error.email;
-        // The firebase.auth.AuthCredential type that was used.
-        var credential = error.credential;
-        console.log("error")
-            // ...
-    });
-})
-
-app.post("/logout", (req, res) => {
-    console.log("logging out!")
-    req.session.loggedin = false;
-    firebase.auth().signOut();
-    res.redirect("/")
-})
+app.post('/logout', function(req,res){logout(req, res)})
 
 app.get("/", (req, res) => {
     if (req.session.loggedin) {
@@ -429,7 +335,6 @@ app.post("/messages", (req, res) => {
                                         console.log('No such document');
                                     } else {
                                         req.session.personalTutorData = doc.data()
-                                        console.log(req.session.tutorChatData)
                                         res.render("messages", {
                                             title: "Message Board",
                                             userData: req.session.userData,
