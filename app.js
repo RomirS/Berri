@@ -12,6 +12,7 @@ const googleSignup = require("./src/googleSignup");
 const logout = require("./src/logout");
 const home = require("./src/home");
 const profile = require("./src/profile");
+const {becomeTutor, saveNewTutor} = require("./src/becomeTutorActions")
 
 const app = express();
 const db = firebaseConfig();
@@ -31,7 +32,6 @@ app.use(session({
     saveUninitialized: true
 }));
 
-
 function shuffle(array) {
     let counter = array.length;
     // While there are elements in the array
@@ -48,51 +48,17 @@ function shuffle(array) {
     return array;
 }
 
-app.get("/signup", function(req,res){signup(req, res)});
-app.post('/post-feedback', function(req,res){postFeedback(req, res)});
-app.post('/loginAuth', function(req,res){loginAuth(req, res)});
-app.post('/googleSignup', function(req,res){googleSignup(req, res)});
-app.post('/logout', function(req,res){logout(req, res)});
-app.get("/", function(req,res){home(req, res)});
+//Logins
+app.get("/signup", signup);
+app.post('/postFeedback', postFeedback);
+app.post('/loginAuth', loginAuth);
+app.post('/googleSignup', googleSignup);
+app.post('/logout', logout);
+app.get("/", home);
 
-app.get("/profile", function(req,res){profile(req, res)})
-
-app.get("/becomeTutor", (req, res) => {
-    if (req.session.loggedin) {
-        console.log(req.session.tutorSubjects)
-        res.render("becomeTutor", {
-            title: "Become a Tutor",
-            tutorSubjects: req.session.tutorSubjects
-        })
-    } else {
-        res.redirect("/")
-    }
-})
-
-app.post('/become-tutor', function(req, res) {
-    var age = req.body.age;
-    var city = req.body.city;
-    var subjects = req.body.subjects;
-    console.log(subjects)
-    if (age && subjects && city) {
-        console.log("signed up as tutor")
-        req.session.tutorLogIn = true;
-        let docRef = db.collection('tutors').doc(req.session.userData["email"])
-        let setInfo = docRef.set({
-            age: age,
-            subjects: subjects,
-            city: city,
-            myStudents: []
-        });
-        docRef = db.collection('users').doc(req.session.userData["email"])
-        setInfo = docRef.update({
-            userType: "Registered Tutor"
-        });
-        req.session.userData["userType"] = "Registered Tutor";
-        return res.redirect("/profile")
-    }
-
-});
+app.get("/profile", profile);
+app.get("/becomeTutor", becomeTutor);
+app.post('/saveNewTutor', saveNewTutor);
 
 app.get('/find-tutor', function(req, res) {
     if (req.session.loggedin) {
