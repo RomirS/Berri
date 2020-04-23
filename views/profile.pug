@@ -58,7 +58,6 @@ script.
   if (userType == "Registered Tutor") {
     is_tutor = true;
   }
-  console.log (is_tutor)
   if (is_tutor) {
     document.getElementById("noContent").style.display = "none";
     document.getElementById("yesContent").style.display = "block";
@@ -67,10 +66,10 @@ script.
     document.getElementById("yesContent").style.display = "none";
   }
 
-  var dropdownContent = document.getElementById("dropdown-content");
+  let dropdownContent = document.getElementById("dropdown-content");
   var tutorSubjects = !{JSON.stringify(tutorSubjects)}
-  var subjectForm = document.getElementById("subjectForm");
-  var inputTextField = document.getElementById("chooseSubjectText");
+  let subjectForm = document.getElementById("subjectForm");
+  let inputTextField = document.getElementById("chooseSubjectText");
   tutorSubjects.forEach(function(subject) {
     var a = document.createElement('a');
     a.value = subject;

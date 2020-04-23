@@ -18,8 +18,4 @@ firebase.initializeApp({
     measurementId: "G-BB398RGVHB"
 });
 
-function getFirebaseDb() {
-    return admin.firestore();
-}
-
-module.exports = getFirebaseDb;
+module.exports = function(){ return admin.firestore(); }

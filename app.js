@@ -1,57 +1,42 @@
 const firebaseConfig = require("./utils/firebaseConfig");
-const express = require('express');
-const session = require('express-session');
-const path = require('path');
-const http = require('http');
-const bodyParser = require('body-parser');
+const expressConfig = require("./utils/expressConfig");
+const {serverConfig, createServer} = require("./utils/serverConfig");
+const socketio = require('socket.io');
 
-const signup = require("./src/signup");
-const postFeedback = require("./src/postFeedback");
-const loginAuth = require("./src/loginAuth");
-const googleSignup = require("./src/googleSignup");
-const logout = require("./src/logout");
-const home = require("./src/home");
+const {signup, postFeedback, loginAuth, googleSignup, logout, home} = require("./src/loginActions");
 const profile = require("./src/profile");
 const {becomeTutor, saveNewTutor} = require("./src/becomeTutorActions");
 const {foundTutors, chooseTutor, retryTutor, tutorProfiles, noTutorFound} = require("./src/findTutorActions");
 
-const app = express();
+const formatMessage = require("./utils/messages");
+
 const db = firebaseConfig();
+const app = expressConfig();
+serverConfig();
+const server = createServer();
 
-const PORT = process.env.PORT || 3000;
-
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(express.static(path.resolve(__dirname, 'public')));
-app.set("views", path.join(__dirname, "views"));
-app.set("view engine", 'pug');
-app.use(express.static(path.join(__dirname, "public")));
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
-app.use(session({
-    secret: 'secret',
-    resave: true,
-    saveUninitialized: true
-}));
+const io = socketio(server);
 
 //Logins
-app.get("/signup", signup);
-app.post('/postFeedback', postFeedback);
-app.post('/loginAuth', loginAuth);
-app.post('/googleSignup', googleSignup);
-app.post('/logout', logout);
-app.get("/", home);
+app
+.get("/signup", signup)
+.post('/postFeedback', postFeedback)
+.post('/loginAuth', loginAuth)
+.post('/googleSignup', googleSignup)
+.post('/logout', logout)
+.get("/", home)
 
 //Profile setup
-app.get("/profile", profile);
-app.get("/becomeTutor", becomeTutor);
-app.post('/saveNewTutor', saveNewTutor);
+.get("/profile", profile)
+.get("/becomeTutor", becomeTutor)
+.post('/saveNewTutor', saveNewTutor)
 
-//Finding a tutor
-app.get('/foundTutors', foundTutors);
-app.get('/chooseTutor', chooseTutor);
-app.get('/retryTutor', retryTutor);
-app.get("/tutorProfiles", tutorProfiles);
-app.get("/noTutorFound", noTutorFound);
+//Find tutor
+.get('/foundTutors', foundTutors)
+.get('/chooseTutor', chooseTutor)
+.get('/retryTutor', retryTutor)
+.get("/tutorProfiles", tutorProfiles)
+.get("/noTutorFound", noTutorFound)
 
 var search = (value, arrayObj) => {
     var found = false;
@@ -65,11 +50,6 @@ var search = (value, arrayObj) => {
     }
     return found;
 };
-
-const socketio = require('socket.io');
-const formatMessage = require("./utils/messages");
-const server = http.createServer(app);
-const io = socketio(server);
 
 app.post("/messages", (req, res) => {
     if (req.session.loggedin) {
@@ -226,8 +206,6 @@ io.on('connection', socket => {
         console.log(`DISCONNECTED! from ${roomID}`)
     })
 })
-
-server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
 
 

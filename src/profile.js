@@ -1,6 +1,6 @@
 const db = require("../utils/firebaseConfig")();
 
-function profile(req, res) {
+module.exports = function(req, res) {
     if (req.session.loggedin) {
         db.collection('subjects').doc("subjects").get()
         .then(doc => {
@@ -44,5 +44,3 @@ function profile(req, res) {
         res.redirect("/");
     }
 }
-
-module.exports = profile;
