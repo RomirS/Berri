@@ -5,8 +5,4 @@ provider.setCustomParameters({
     prompt: 'select_account consent'
 });
 
-function getProvider() {
-    return provider;
-}
-
-module.exports = getProvider;
+module.exports = function(){ return provider; }

@@ -5,8 +5,8 @@ const bodyParser = require('body-parser');
 
 const app = express();
 app
-.set("views", path.join(__dirname, "../views"))
-.set("view engine", 'pug')
+.set('views', path.resolve(__dirname, '../views'))
+.set('view engine', 'pug')
 .use(express.static(path.resolve(__dirname, '../public')))
 .use(bodyParser.urlencoded({ extended: true }))
 .use(bodyParser.json())
@@ -17,5 +17,5 @@ app
 }));
 
 module.exports = function(){ return app; }
-
-//app.use(bodyParser.urlencoded({ extended: false }))
+    
+    //appbodyParser.urlencoded({ extended: false })                                                

@@ -103,7 +103,7 @@ module.exports = function(req, res) {
                             console.log('Error1 getting document', err);
                         });
                 } else {
-                    res.render("messages", {
+                    res.render("messageBoard", {
                         title: "Message Board",
                         userData: req.session.userData,
                         tutorChatData: req.session.tutorChatData,

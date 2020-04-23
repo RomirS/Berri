@@ -33,7 +33,7 @@ form#signupformA(action='/' method='get')
   .button.in-line(id = "fixedButton")
     input(type='submit' value='Return Home')
 
-script(src="/socket.io/socket.io.js")
+script(src="socket.io/socket.io.js")
 script.
   const socket = io();
   var userData = !{JSON.stringify(userData)};
@@ -177,8 +177,9 @@ script.
       chatData[0].chats = [];
     }
     var msg = {
-      chat: message.text,
-      sender: message.username,
+      chat: message.chat,
+      sender: message.sender,
+      prof_pic: message.prof_pic,
       time: message.time
     }
     //whenever user messages or person in the same room as user messages, this happens
