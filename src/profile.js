@@ -2,15 +2,11 @@ const db = require("../utils/firebaseConfig")();
 
 function profile(req, res) {
     if (req.session.loggedin) {
-        username = req.session.userData["first"];
-        useremail = req.session.userData["email"];
         db.collection('subjects').doc("subjects").get()
         .then(doc => {
             if (!doc.exists) {
                 console.log('No such document!');
             } else {
-                req.session.tutorBlacklist = []
-                req.session.tutorBlacklist.push(req.session.userData["email"])
                 req.session.tutorSubjects = doc.data()["all_subjects"]
                 req.session.save()
             }

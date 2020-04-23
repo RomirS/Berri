@@ -12,7 +12,8 @@ const googleSignup = require("./src/googleSignup");
 const logout = require("./src/logout");
 const home = require("./src/home");
 const profile = require("./src/profile");
-const {becomeTutor, saveNewTutor} = require("./src/becomeTutorActions")
+const {becomeTutor, saveNewTutor} = require("./src/becomeTutorActions");
+const {foundTutors, chooseTutor, retryTutor, tutorProfiles, noTutorFound} = require("./src/findTutorActions");
 
 const app = express();
 const db = firebaseConfig();
@@ -32,22 +33,6 @@ app.use(session({
     saveUninitialized: true
 }));
 
-function shuffle(array) {
-    let counter = array.length;
-    // While there are elements in the array
-    while (counter > 0) {
-        // Pick a random index
-        let index = Math.floor(Math.random() * counter);
-        // Decrease counter by 1
-        counter--;
-        // And swap the last element with it
-        let temp = array[counter];
-        array[counter] = array[index];
-        array[index] = temp;
-    }
-    return array;
-}
-
 //Logins
 app.get("/signup", signup);
 app.post('/postFeedback', postFeedback);
@@ -56,95 +41,17 @@ app.post('/googleSignup', googleSignup);
 app.post('/logout', logout);
 app.get("/", home);
 
+//Profile setup
 app.get("/profile", profile);
 app.get("/becomeTutor", becomeTutor);
 app.post('/saveNewTutor', saveNewTutor);
 
-app.get('/find-tutor', function(req, res) {
-    if (req.session.loggedin) {
-        var subjectChosen = req.query.chosenSubject;
-        req.session.subjectChosen = subjectChosen;
-        var allTutors = []
-        var foundTutors = []
-        if (subjectChosen) {
-            let tutorRef = db.collection('tutors').get()
-            tutorRef.then(snapshot => {
-                snapshot.forEach(doc => {
-                    var currTutor = [doc.id, doc.data()]
-                    allTutors.push(currTutor)
-                })
-                allTutors.forEach(tutor => {
-                    if (tutor[1]["subjects"].includes(subjectChosen) && !(req.session.tutorBlacklist.includes(tutor[0]))) {
-                        foundTutors.push(tutor)
-                    }
-                })
-                foundTutors = shuffle(foundTutors)
-                if (foundTutors.length == 0)
-                    return res.redirect("/noTutorFound")
-
-                tutor = foundTutors[0];
-                var tutorEmail = tutor[0]
-                let tutors = db.collection('tutors').doc(tutorEmail).get();
-                tutors.then(tutorDoc => {
-                    if (!tutorDoc.exists) {
-                        console.log('No such document!');
-                    } else {
-                        req.session.tutorData = tutorDoc.data()
-                        let userRef = db.collection('users').doc(tutorEmail).get();
-                        userRef.then(doc => {
-                            if (!doc.exists) {
-                                console.log('No such document!');
-                            } else {
-                                req.session.tutorUserData = doc.data()
-                                req.session.save()
-                                return res.redirect("/tutorProfiles")
-                            }
-                        }).catch(err => {
-                            console.log('Error1 getting document', err);
-
-                        });
-                    }
-                }).catch(err => {
-                    console.log('Error2 getting document', err);
-                });
-
-
-
-            }).catch(err => {
-                console.log('Error getting documents', err);
-            });
-        }
-    } else {
-        res.redirect("/");
-    }
-});
-
-app.get('/retry-tutor', function(req, res) {
-    if (req.session.loggedin) {
-        req.session.tutorBlacklist.push(req.query["email"])
-        return res.redirect("/find-tutor?chosenSubject=" + req.session.subjectChosen)
-    } else {
-        res.redirect("/");
-    }
-})
-
-app.get("/noTutorFound", (req, res) => {
-    res.send("Could not find a tutor.");
-})
-
-app.get("/tutorProfiles", (req, res) => {
-    if (req.session.loggedin) {
-        res.render("tutorProfiles", {
-            title: "Tutor Profiles",
-            tutorUserData: req.session.tutorUserData,
-            tutorData: req.session.tutorData,
-            chosen_subject: req.session.subjectChosen,
-            subjects: req.session.tutorData["subjects"],
-        })
-    } else {
-        res.redirect("/");
-    }
-})
+//Finding a tutor
+app.get('/foundTutors', foundTutors);
+app.get('/chooseTutor', chooseTutor);
+app.get('/retryTutor', retryTutor);
+app.get("/tutorProfiles", tutorProfiles);
+app.get("/noTutorFound", noTutorFound);
 
 var search = (value, arrayObj) => {
     var found = false;
@@ -179,7 +86,7 @@ app.post("/messages", (req, res) => {
                     age: req.session.tutorData["age"],
                     city: req.session.tutorData["city"],
                     subjects: req.session.tutorData["subjects"],
-                    subjectChosen: req.session.subjectChosen
+                    subjectChosen: req.session.chosenSubject
                 };
                 //Adds tutor to myTutors list in Firebase
                 tutors.push(tutor);
@@ -192,7 +99,7 @@ app.post("/messages", (req, res) => {
                 setInfo = chatRef.set({
                     tutor: tutor.email,
                     student: req.session.userData["email"],
-                    subject: tutor.subjectChosen,
+                    subject: req.session.chosenSubject,
                     chats: []
                 });
             }
@@ -206,7 +113,7 @@ app.post("/messages", (req, res) => {
                     first: req.session.userData["first"],
                     last: req.session.userData["last"],
                     prof_pic: req.session.userData["prof_pic"],
-                    subjectChosen: req.session.subjectChosen
+                    subjectChosen: req.session.chosenSubject
                 };
 
                 students.push(student);

@@ -20,7 +20,7 @@ head
       .section
         #headerSection
           h1 Hello, #{name}      
-          form#subjectForm(method="GET" action="find-tutor")
+          form#subjectForm(method="GET" action="foundTutors")
             .dropdown 
               input(id="chooseSubjectText" type='text' name='chosenSubject' placeholder='What do you need help with?' autocomplete="off")
               #dropdown-content

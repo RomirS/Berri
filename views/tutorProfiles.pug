@@ -11,7 +11,7 @@ head
 
 .flexContainer
   .box-1
-    form#retryForm(method="GET" action="retry-tutor")
+    form#retryForm(method="GET" action="retryTutor")
       input(name="email" value=tutorUserData["email"] style="display:none")
       a(class="button" id="noBtn" href="javascript:{}" onclick="document.getElementById('retryForm').submit();") ↻
   .box-2
@@ -31,3 +31,6 @@ head
     form#submitForm(method="post" action="messages")
       input(name="newTutor" value="true" style="display:none")
       a(class="button" id="yesBtn" href="javascript:{}" onclick="document.getElementById('submitForm').submit();") ✔
+form#signupformA(action='/' method='get')
+  .button.in-line(id = "fixedButton")
+    input(type='submit' value='Return Home')
