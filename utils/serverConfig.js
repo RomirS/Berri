@@ -1,9 +1,9 @@
 const expressConfig = require("./expressConfig");
 const app = expressConfig();
 const http = require('http').createServer(app);
+
 const io = require('socket.io')(http);
 const db = require("../utils/firebaseConfig")();
-
 const formatMessage = require("./messages");
 
 //Socketio

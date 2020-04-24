@@ -206,17 +206,18 @@ script.
   }
 
   //Join default room
-  let firstTutor = myTutors[0]
+  var defaultPerson = myTutors[0];
+  console.log(defaultPerson);
   var executed = false;
   if (!executed) {
     executed = true;
-    document.getElementById('chatHeading').innerText = (`${firstTutor.first} ${firstTutor.last}`);
-    document.getElementById('imgHeading').src = firstTutor.prof_pic;
-    selectedRoom = `${firstTutor.email}?${userData.email}`;
+    document.getElementById('chatHeading').innerText = (`${defaultPerson.first} ${defaultPerson.last}`);
+    document.getElementById('imgHeading').src = defaultPerson.prof_pic;
+    selectedRoom = `${defaultPerson.email}?${userData.email}`;
     document.getElementById(`${selectedRoom}`).style.background = "rgba(253, 145, 145, 0.486)";
 
     chatData = tutorChatData.filter(obj => {
-      return obj.tutor === firstTutor.email
+      return obj.tutor === defaultPerson.email
     });
     
     if (chatData.length != 0) {
