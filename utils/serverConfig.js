@@ -4,7 +4,7 @@ const http = require('http').createServer(app);
 
 const io = require('socket.io')(http);
 const db = require("../utils/firebaseConfig")();
-const formatMessage = require("./messages");
+let formatMessage = require("../helpers/message").formatMessage;
 
 //Socketio
 io.on('connection', socket => {
@@ -36,7 +36,7 @@ io.on('connection', socket => {
                         let newChat = {
                             chat: message.chat,
                             sender: message.sender,
-                            prof_pic: userpfp,
+                            prof_pic: message.prof_pic,
                             time: message.time
                         }
                         myChats.push(newChat);

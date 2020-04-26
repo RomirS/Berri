@@ -15,7 +15,7 @@ function search(value, arrayObj) {
 
 module.exports = function(req, res) {
     if (req.session.loggedin) {
-        if (req.body.newTutor == "true") { //stores new tutor when person finds new tutor
+        if (req.body.newTutor == "true") {
             //Updates student's myTutor list
             let tutors = req.session.userData["myTutors"];
             let docRef = db.collection('users').doc(req.session.userData["email"]);

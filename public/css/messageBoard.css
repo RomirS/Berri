@@ -46,6 +46,8 @@
     line-height: 80px;
     margin: 1px 8px;
     border-radius: 20px;
+    font-weight: 200;
+    overflow-x: hidden;
 }
 
 .chat:hover {
@@ -69,7 +71,6 @@ h5 {
     all: unset;
     position: absolute;
     font-size: 20px;
-    font-weight: 500;
     top: -10px;
     padding-left: 10px;
 }
@@ -102,7 +103,7 @@ h5 {
     font-size: 25px;
 }
 
-.chat-messages {
+.chatMessages {
     height: 80%;
     overflow-x: hidden;
     overflow-y: scroll;
@@ -212,4 +213,8 @@ input[type="text"] {
 
 #fixedButton {
     width: 170px;
+}
+
+.hidden {
+    display: none;
 }

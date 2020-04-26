@@ -20,19 +20,16 @@ module.exports = function(req, res) {
                 console.log('NOT TUTOR');
                 res.render("profile", {
                     title: "Profile",
-                    name: req.session.userData["first"],
-                    userType: req.session.userData["userType"],
-                    prof_pic: req.session.userData["prof_pic"],
+                    userData: req.session.userData,
+                    tutorData: req.session.userData["userType"],
                     tutorSubjects: req.session.tutorSubjects
                 })
             } else {
                 req.session.tutorData = tutorDoc.data()
                 res.render("profile", {
                     title: "Profile",
-                    name: req.session.userData["first"],
-                    userType: req.session.userData["userType"],
-                    prof_pic: req.session.userData["prof_pic"],
-                    subjects: req.session.tutorData["subjects"],
+                    userData: req.session.userData,
+                    tutorData: req.session.tutorData,
                     tutorSubjects: req.session.tutorSubjects
                 })
             }

@@ -1,6 +1,5 @@
 const db = require("../utils/firebaseConfig")();
 
-var foundTutorsList = [];
 function shuffle(array) {
     let counter = array.length;
     while (counter > 0) {
@@ -16,19 +15,20 @@ function shuffle(array) {
 module.exports = {
     foundTutors: function(req,res) {
         if (req.session.loggedin) {
+            req.session.foundTutorsList = [];
             req.session.chosenSubject = req.query.chosenSubject;
             if (req.session.chosenSubject) {
                 db.collection('tutors').get()
                 .then(snapshot => {
                     snapshot.forEach(doc => {
                         if (doc.data().subjects.includes(req.session.chosenSubject) && doc.id != req.session.userData["email"]) { 
-                            foundTutorsList.push({
+                            req.session.foundTutorsList.push({
                                 id: doc.id,
                                 data: doc.data()
                             });       
                         }
                     });
-                    foundTutorsList = shuffle(foundTutorsList);
+                    req.session.foundTutorsList = shuffle(req.session.foundTutorsList);
                     req.session.foundTutorsIndex = 0;
                     return res.redirect("/chooseTutor")
                 }).catch(err => {
@@ -38,8 +38,8 @@ module.exports = {
         }
     },
     chooseTutor: function(req, res) {
-        if (req.session.foundTutorsIndex >= foundTutorsList.length) {return res.redirect("/noTutorFound")};
-        let tutor = foundTutorsList[req.session.foundTutorsIndex];
+        if (req.session.foundTutorsIndex >= req.session.foundTutorsList.length) {return res.redirect("/noTutorFound")};
+        let tutor = req.session.foundTutorsList[req.session.foundTutorsIndex];
         req.session.tutorData = tutor.data;
         db.collection('users').doc(tutor.id).get()
         .then(doc => {
