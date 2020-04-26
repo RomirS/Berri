@@ -47,43 +47,13 @@ head
     .button(id = "fixedButton")
       input(type='submit' value='Logout')
 
+p.hidden(id='userData')
+p.hidden(id='tutorData')
+p.hidden(id='tutorSubjects')
+
 script.
-  let userData = !{JSON.stringify(userData)};
-  let tutorData = !{JSON.stringify(tutorData)};
-  let tutorSubjects = !{JSON.stringify(tutorSubjects)};
-  let NOCONT = $( "#noContent" );
-  let YESCONT = $( "#yesContent" );
-
-  var isTutor = false;
-  if (userData.userType == "Registered Tutor") {
-    isTutor = true;
-  }
-
-  if (isTutor) {
-    NOCONT.css("display", "none");
-    YESCONT.css("display", "block").addClass('center');
-    tutorData.subjects.forEach(subject => {
-      YESCONT.append(`<h3>${subject}</h3>`);
-    });
-  } else {
-    NOCONT.css("display", "block");
-    YESCONT.css("display", "none");
-  }
-
-  let DROPCONT = $("#dropdown-content");
-  let SUBJFORM = $("#subjectForm");
-  let INPTXT = document.getElementById("chooseSubjectText");
-  tutorSubjects.forEach(function(subject) {
-    var a = document.createElement('a');
-    a.value = subject;
-    a.appendChild(document.createTextNode(subject));
-    a.addEventListener("click", function(){ 
-      INPTXT.setAttribute("value", ''); 
-      INPTXT.setAttribute("value", a.value); 
-      SUBJFORM.submit();
-    });
-    DROPCONT.append(a)
-  });
-  
-
+  document.getElementById('userData').value = !{JSON.stringify(userData)};
+  document.getElementById('tutorData').value = !{JSON.stringify(tutorData)};
+  document.getElementById('tutorSubjects').value = !{JSON.stringify(tutorSubjects)};
+script(src="js/profileView.js")
 

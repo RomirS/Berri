@@ -7,7 +7,8 @@ module.exports = {
             sender,
             prof_pic,
             chat,
-            time: moment().format('h:mm a')
+            time: moment().format('h:mm a'),
+            status: 'unread'
         };
     }
 }

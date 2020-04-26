@@ -5,17 +5,9 @@ var tutorChatData = document.getElementById('tutorChatData').value;
 var studentChatData = document.getElementById('studentChatData').value;
 var personalTutorData = document.getElementById('personalTutorData').value;
 
-function setParams(ud, tcd, scd, ptd) {
-    userData = ud;
-    tutorChatData = tcd;
-    studentChatData = scd;
-    personalTutorData = ptd;
-}
-
 var myTutors = [];
 var myStudents = [];
 var selectedRoom;
-var chatData;
 let CHATMSGS = $('.chatMessages');
 
 //Outputs list of tutors under "Your Tutors"
@@ -23,7 +15,7 @@ myTutors = userData.myTutors;
 let YT = $('#yourTutors');
 if (myTutors.length > 0) {
     YT.css("display", "block");
-    renderChats(myTutors, yourTutors, tutorChatData);
+    renderChats(myTutors, yourTutors);
 } else {
     YT.css("display", "none");
 }
@@ -34,39 +26,55 @@ if (userData.userType == "Registered Tutor") {
     let YS = $('#yourStudents');
     if (myStudents.length > 0) {
         YS.css("display", "block");
-        renderChats(myStudents, yourStudents, studentChatData);
+        renderChats(myStudents, yourStudents);
     } else {
         YS.css("display", "none");
     }
 }
 
 var executed = false;
-function renderChats(arrayObj, divElement, objChatData) {
+var chatData;
+function renderChats(arrayObj, divElement) {
     var loadTutor = false;
     if (divElement.id == "yourTutors") {
-        loadTutor = true;
+        loadTutor = true; 
     }
-
+    //Load chats
     arrayObj.forEach(obj => {
         let CHAT = document.createElement("div");
         CHAT.classList.add("chat");
-        CHAT.innerHTML = `<img src=${obj.prof_pic} class="circleCrop" alt="Profile Pic"><h5>${obj.first} ${obj.last}</h5> <p></p>`
-        divElement.append(CHAT);
-
+        CHAT.innerHTML = `<img src=${obj.prof_pic} class="circleCrop" alt="Profile Pic"><h5>${obj.first} ${obj.last}</h5> <p></p>`;
+        var oldChatData;
         if (loadTutor) {
             CHAT.id = `${obj.email}?${userData.email}`;
+            oldChatData = tutorChatData.filter(chatObj => {
+                return chatObj.tutor === obj.email
+            });
         } else {
             CHAT.id = `${userData.email}?${obj.email}`;
+            oldChatData = studentChatData.filter(chatObj => {
+                return chatObj.student === obj.email
+            });
         }
+        let chatArray = oldChatData[0].chats;
+        if (chatArray.length > 0) {
+            if (chatArray[chatArray.length - 1].status == 'unread') {
+                CHAT.style.fontWeight = "800";
+                console.log(CHAT.style);
+            } else {
+                CHAT.style.fontWeight = "200";
+            }
+        }
+        divElement.append(CHAT);
+
         socket.emit('joinRoom', CHAT.id);
 
         CHAT.addEventListener("click", (e) => {
             if (selectedRoom != CHAT.id) {
-            selectChat(obj, loadTutor, CHAT.id);
+                selectChat(obj, loadTutor, CHAT.id);
             }
         });
     });
-
     //Join default room
     if (!executed) {
         executed = true;
@@ -108,13 +116,7 @@ function selectChat(person, loadTutor, chatID) {
     }
     if (chatData[0].chats.length != 0) {
         chatData[0].chats.forEach(chatObj =>{
-            let message = {
-                chat: chatObj.chat,
-                sender: chatObj.sender,
-                prof_pic: chatObj.prof_pic,
-                time: chatObj.time
-            }
-            outputMessage(message);
+            outputMessage(chatObj);
         });
     } else {
         chatData[0].chats = [];
@@ -172,7 +174,8 @@ function saveNewMessage(message) {
         chat: message.chat,
         sender: message.sender,
         prof_pic: message.prof_pic,
-        time: message.time
+        time: message.time,
+        status: message.status
     }
     //whenever user messages or person in the same room as user messages, this happens
     if (message.room == selectedRoom) {

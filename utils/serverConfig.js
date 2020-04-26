@@ -37,7 +37,8 @@ io.on('connection', socket => {
                             chat: message.chat,
                             sender: message.sender,
                             prof_pic: message.prof_pic,
-                            time: message.time
+                            time: message.time,
+                            status: message.status
                         }
                         myChats.push(newChat);
                         let setInfo = chatRef.update({
