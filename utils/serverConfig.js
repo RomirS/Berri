@@ -25,14 +25,41 @@ io.on('connection', socket => {
 
         //Listens for chat message and adds message to Firebase
         let chatRef = db.collection('chatrooms').doc(`${roomID}`);
+
+        chatRef.get()
+        .then(doc => {
+            if (!doc.exists) {
+                console.log('No such document');
+            } else {
+                var cont = true;
+                var myChats = doc.data().chats;
+                var i = myChats.length - 1;
+                while(i >= 0 && cont) {
+                    if (myChats[i].sender != useremail) {
+                        if (myChats[i].status == 'read') {
+                            cont = false;
+                        } else {
+                            myChats[i].status = 'read';
+                        }
+                    }
+                    i--;
+                }
+                chatRef.update({
+                    chats: myChats
+                });
+            }
+        }).catch((err) => {
+            console.log(err)
+        });
+
         socket.on('chatMessage', msg => {
             let message = formatMessage(roomID, `${useremail}`, userpfp, msg);
-            db.collection('chatrooms').doc(`${roomID}`).get()
+            chatRef.get()
                 .then(doc => {
                     if (!doc.exists) {
                         console.log('No such document');
                     } else {
-                        myChats = doc.data().chats;
+                        var myChats = doc.data().chats;
                         let newChat = {
                             chat: message.chat,
                             sender: message.sender,
@@ -41,7 +68,7 @@ io.on('connection', socket => {
                             status: message.status
                         }
                         myChats.push(newChat);
-                        let setInfo = chatRef.update({
+                        chatRef.update({
                             chats: myChats
                         });
                     }

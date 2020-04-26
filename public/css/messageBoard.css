@@ -22,6 +22,7 @@
 
 #searchMenu {
     text-align: center;
+    height: 10%;
 }
 
 .head {
@@ -35,8 +36,18 @@
     font-weight: 500;
 }
 
+#yourTutors {
+    display: none;
+    height: auto;
+    max-height: 45%;
+    overflow-y: scroll;
+}
+
 #yourStudents {
     display: none;
+    height: auto;
+    max-height: 45%;
+    overflow-y: scroll;
 }
 
 .chat {

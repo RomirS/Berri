@@ -16,8 +16,6 @@ let YT = $('#yourTutors');
 if (myTutors.length > 0) {
     YT.css("display", "block");
     renderChats(myTutors, yourTutors);
-} else {
-    YT.css("display", "none");
 }
 
 //Ouputs list of students under "Your Students"
@@ -27,8 +25,6 @@ if (userData.userType == "Registered Tutor") {
     if (myStudents.length > 0) {
         YS.css("display", "block");
         renderChats(myStudents, yourStudents);
-    } else {
-        YS.css("display", "none");
     }
 }
 
@@ -58,12 +54,13 @@ function renderChats(arrayObj, divElement) {
         }
         let chatArray = oldChatData[0].chats;
         if (chatArray.length > 0) {
-            if (chatArray[chatArray.length - 1].status == 'unread') {
-                CHAT.style.fontWeight = "800";
-                console.log(CHAT.style);
+            if (chatArray[chatArray.length - 1].status == 'unread' && chatArray[chatArray.length - 1].sender!= userData.email) {
+                CHAT.style.fontWeight = "600";
             } else {
                 CHAT.style.fontWeight = "200";
             }
+        } else {
+            CHAT.style.fontWeight = "200";
         }
         divElement.append(CHAT);
 
