@@ -17,7 +17,6 @@ module.exports = {
         var repeatPassword = req.body.passwordRepeat;
         var firstName = req.body.firstname;
         var lastName = req.body.lastname;
-
         if (email && password && (password == repeatPassword)) {
             firebase.auth().createUserWithEmailAndPassword(email, password).then(() => {
                 console.log("logged in")
@@ -72,7 +71,6 @@ module.exports = {
         var id_token = req.body.idToken;
         // Build Firebase credential with the Google ID token.
         var credential = provider.credential(id_token);
-
         // Sign in with credential from the Google user.
         firebase.auth().signInWithCredential(credential).then(authResult => {
             req.session.loggedin = true;
@@ -109,7 +107,6 @@ module.exports = {
                 .catch(err => {
                     console.log('Error getting document', err);
                 });
-
         }).catch((error) => {
             // Handle Errors here.
             var errorCode = error.code;
