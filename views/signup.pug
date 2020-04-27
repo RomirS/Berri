@@ -1,0 +1,97 @@
+doctype html
+head
+  meta(charset='UTF-8')
+  meta(name='viewport' content='width=device-width, initial-scale=1.0')
+  meta(http-equiv='X-UA-Compatible' content='ie-edge')
+  title #{title}
+
+  //- for google sign in: 
+  meta(name="google-signin-client_id" content="787660474330-srqgc8h2jbt1tuicaqrk023lpd4ai1d9.apps.googleusercontent.com")
+  script(src="https://apis.google.com/js/platform.js" async defer)
+  script(src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js")
+  //- 
+
+  link(rel='stylesheet' type='text/css' href='css/style.css')
+  link(href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700' rel='stylesheet' type='text/css')
+  title Berri Sign Up
+.titleHead
+  h1#title-text Go Berri
+  p Join the ever-increasing market of high school tutors today
+.app
+  .container__signup
+    form#signupformA(action='postFeedback' method='post')
+      .form-group
+        label(for='firstname') First Name
+        br
+        input#firstname.form-control(type='text' name='firstname' placeholder='First Name' required='')
+      .form-group
+        label(for='lastname') Last Name
+        br
+        input#lastname.form-control(type='text' name='lastname' placeholder='Last Name' required='')
+      .form-group
+        label(for='email') Email
+        br
+        input#email.form-control(type='text' name='email' placeholder='Email Address' required='')
+      .form-group
+        label(for='password') Password
+        br
+        input#password.form-control(type='password' name='password' placeholder='Password' required='')
+      .form-group
+        label(for='passwordRepeat') Repeat Password
+        br
+        input#passwordRepeat.form-control(type='password' name='passwordRepeat' placeholder='Repeat Password' required='')
+      .button.in-line
+        input(type='submit' value='Sign Up')
+      div.g-signin2(data-onsuccess="onSignIn" data-prompt="select_account consent").in-line 
+      p Already have an account? #[a(href='/') Sign in]
+        
+
+  // form#google-form(action="googleSignup", method="post")
+  //   .g-sign-in-button#google-button
+  //     .content-wrapper
+  //       .logo-wrapper
+  //         img(src='https://developers.google.com/identity/images/g-logo.png')
+  //       span.text-container 
+  //         span Sign up with Google
+  
+    
+    
+  script.
+    //- var form = document.getElementById ("google-form");
+    //- document.getElementById("google-button").addEventListener("click", function () {
+    //-   form.submit();
+    //- });
+    //- onSignIn {
+    //-   form.submit ();
+    //- }
+    //- console.log ("hi")
+    window.onbeforeunload = function(e){
+      gapi.auth2.getAuthInstance().signOut();
+    };
+    var xhttp = new XMLHttpRequest();
+    function onSignIn (googleUser) {
+      var profile = googleUser.getBasicProfile ();
+      console.log ("Name: " + profile.getName())
+      var id_token = googleUser.getAuthResponse().id_token;
+      console.log (id_token)
+
+      var _data = {
+        "idToken": id_token
+      }
+
+      $.ajax({
+        type: "POST",
+        url: "googleSignup",
+        data: {idToken: id_token},
+        dataType: "json",
+        success: function(data, textStatus) {
+            console.log ("SUCCESS")
+            console.log (data.url)
+            window.location.replace (data.url)
+        }
+      });  
+
+      //- xhttp.open ("POST", "google_signup", false);
+      //- xhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+      //- xhttp.send ("id_token="+id_token);
+    }

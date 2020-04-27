@@ -1,0 +1,77 @@
+.flexContainer {
+    display: flex;
+    align-items: center;
+}
+
+.box-1 {
+    flex: 1;
+}
+
+.box-2 {
+    flex: 1.3;
+}
+
+.box-3 {
+    flex: 1;
+}
+
+
+/*overriding section*/
+
+.section {
+    padding: 50px;
+    border-radius: 25px;
+    height: 700px;
+}
+
+/*Overriding headers*/
+
+h1 {
+    text-align: center;
+    padding-left: 0;
+    font-size: 40px;
+    margin-bottom: 5px;
+}
+
+h4 {
+    text-align: center;
+    font-weight: 300;
+    margin: 15px;
+}
+
+.center {
+    text-align: center;
+}
+
+/*Overriding .prof*/
+.prof {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 200px;
+    padding: 0;
+    height: auto;
+    border: none;
+}
+
+/*Overriding .button*/
+.button {
+    font-size: 70px;
+    position: absolute;
+    width: 150px;
+    height: 150px;
+    border-radius: 75px;
+    line-height: 140px;
+    box-shadow: 0 0 0;
+    transform: translateY(-45%);
+  }
+
+#noBtn {
+    background: rgb(253, 145, 145);
+    left: 9%;
+}
+
+#yesBtn {
+    background: #8DF541;
+    right: 8%;
+}

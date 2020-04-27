@@ -1,0 +1,26 @@
+doctype html
+head
+  meta(charset='UTF-8')
+  meta(name='viewport' content='width=device-width, initial-scale=1.0')
+  meta(http-equiv='X-UA-Compatible' content='ie-edge')
+  title #{title}
+  link(rel='stylesheet' type='text/css' href='css/style.css')
+  link(href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700' rel='stylesheet' type='text/css')
+  script(src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js")
+  script(src="https://harvesthq.github.io/chosen/chosen.jquery.js")
+  link(href="https://harvesthq.github.io/chosen/chosen.css" rel="stylesheet" type="text/css")
+.app.centerForm
+  .container__signup
+    form#signupformA(method="GET" action="find-tutor")
+      .form-group#firstElement
+        label(for='subject') What Subject do you need help with?
+        br
+        #output
+        select.chosen-select(data-placeholder='What subject do you need help with?' name='subject')
+          each subject in tutorSubjects
+            option(value=subject) #{subject}
+        input(type='submit' value='→')
+          
+script.
+  document.getElementById('output').innerHTML = location.search;
+  $(".chosen-select").chosen();

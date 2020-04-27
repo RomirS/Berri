@@ -1,0 +1,61 @@
+doctype html
+head
+  meta(charset='UTF-8')
+  meta(name='viewport' content='width=device-width, initial-scale=1.0')
+  meta(http-equiv='X-UA-Compatible' content='ie-edge')
+  script(src="//code.jquery.com/jquery-3.4.1.min.js")
+  link(rel='stylesheet' type='text/css' href='css/style.css')
+  link(rel='stylesheet' type='text/css' href='css/profile.css')
+  link(href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700' rel='stylesheet' type='text/css')
+  //script(src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js")
+  //script(src="https://harvesthq.github.io/chosen/chosen.jquery.js")
+  //link(href="https://harvesthq.github.io/chosen/chosen.css" rel="stylesheet" type="text/css")
+  title Berri Profile
+
+  .row
+    .box-1
+      .section
+        .imageSection
+          img.prof.circleCrop(src=userData.prof_pic alt='Profile Pic')
+          div.overlay.circleCrop(onclick="changeProfPic()") Change Profile Picture
+    .box-2
+      .section
+        #headerSection
+          h1 Hello, #{userData.first}      
+          form#subjectForm(method="GET" action="foundTutors")
+            .dropdown 
+              input(id="chooseSubjectText" type='text' name='chosenSubject' placeholder='What do you need help with?' autocomplete="off")
+              #dropdown-content
+              #goBtn
+                input(type='submit' value='→')
+            br
+            br
+              
+  .row
+    .box-3
+      .section.removePadding
+        #noContent
+          p Looks like you aren't a tutor yet!
+          a(class = "button" href='/becomeTutor' id = "BecomeTutor") Become a Tutor
+        #yesContent
+          h2 YOUR SUBJECTS
+    .box-4
+      .section.dashboard
+        form#submitForm(method="post" action="messageBoard")
+          input(name="newTutor" value=false style="display:none")
+          a(class="button" id="messagesBtn" href="javascript:{}" onclick="document.getElementById('submitForm').submit();") Messages
+  form#signupformA(action='logout' method='post')
+    .button(id = "fixedButton")
+      input(type='submit' value='Logout')
+
+p.hidden(id='userData')
+p.hidden(id='tutorData')
+p.hidden(id='tutorSubjects')
+
+script.
+  document.getElementById('userData').value = !{JSON.stringify(userData)};
+  document.getElementById('tutorData').value = !{JSON.stringify(tutorData)};
+  document.getElementById('tutorSubjects').value = !{JSON.stringify(tutorSubjects)};
+
+script(src="js/profileView.js")
+
