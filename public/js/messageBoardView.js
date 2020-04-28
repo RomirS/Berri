@@ -60,9 +60,8 @@ function renderChats(arrayObj, divElement) {
         }
         let chatArray = oldChatData[0].chats;
         if (chatArray.length > 0) {
-            if (chatArray[chatArray.length - 1].status == 'unread') {
+            if (chatArray[chatArray.length - 1].status == 'unread' && chatArray[chatArray.length - 1].sender != userData.email) {
                 CHAT.style.fontWeight = "800";
-                console.log(CHAT.style);
             } else {
                 CHAT.style.fontWeight = "200";
             }
