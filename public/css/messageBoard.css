@@ -35,8 +35,20 @@
     font-weight: 500;
 }
 
+#yourTutors {
+    display: none;
+    height: auto;
+    max-height: 45%;
+    overflow-y: scroll;
+    border-top: 2px solid rgb(228, 227, 227);
+}
+
 #yourStudents {
     display: none;
+    height: auto;
+    max-height: 45%;
+    overflow-y: scroll;
+    border-top: 2px solid rgb(228, 227, 227);
 }
 
 .chat {
@@ -86,7 +98,6 @@ h5 {
 .chat-header {
     height: 10%;
     padding: 20px;
-    border-bottom: 2px solid rgb(228, 227, 227);
     position: relative;
 }
 
@@ -107,6 +118,7 @@ h5 {
     overflow-x: hidden;
     overflow-y: scroll;
     padding: 30px;
+    border-top: 2px solid rgb(228, 227, 227);
     position: relative;
 }
 
@@ -114,7 +126,7 @@ h5 {
     width: 100%;
 }
 
-#userMsg .text {
+.userMsg .text {
     width: auto;
     max-width: 45%;
     float: right;
@@ -127,16 +139,7 @@ h5 {
     border-bottom-right-radius: 5px;
 }
 
-#userMsg .meta {
-    width: 100%;
-    float: right;
-    text-align: right;
-    margin: 10px 5px 0 0;
-    font-size: 12px;
-    color: rgba(201, 201, 201, 0.692);
-}
-
-#otherMsg .text {
+.otherMsg .text {
     width: auto;
     max-width: 45%;
     float: left;
@@ -150,25 +153,36 @@ h5 {
     border-bottom-left-radius: 5px;
 }
 
-#otherMsg .meta {
+.userMsg span {
+    width: 100%;
+    float: right;
+    text-align: right;
+    margin: 2px 5px 0 0;
+    font-size: 12px;
+    color: rgba(201, 201, 201, 0.692);
+    font-weight: 600;
+}
+
+.otherMsg span {
     width: 100%;
     float: left;
     text-align: left;
-    margin: 10px 0 0 45px;
+    margin: 3px 0 0 45px;
     font-size: 12px;
     color: rgba(201, 201, 201, 0.692);
+    font-weight: 600;
 }
 
-#otherMsg img {
+.otherMsg img {
     height: 35px;
     width: 35px;
     float: left;
     transform: translateY(50%);
 }
 
-.message span {
-    font-weight: 600;
-}
+/* .message .meta {
+    width: 100%;
+} */
 
 .chat-form-container {
     position: relative;
