@@ -16,6 +16,9 @@ function search(value, arrayObj) {
 module.exports = {
     messageBoard: function(req, res) {
         if (req.session.loggedin) {
+            if (!req.session.chosenSubject) {
+                req.session.chosenSubject = "Any Subject"
+            }
             if (req.body.newTutor == "true") {
                 //Updates student's myTutor list
                 let tutors = req.session.userData["myTutors"];
