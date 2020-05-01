@@ -39,12 +39,10 @@ form#signupformA(action='/' method='get')
 p.hidden(id='userData')
 p.hidden(id='tutorChatData')
 p.hidden(id='studentChatData')
-p.hidden(id='personalTutorData')
 
 script(src="socket.io/socket.io.js")
 script.
   document.getElementById('userData').value = !{JSON.stringify(userData)};
   document.getElementById('tutorChatData').value = !{JSON.stringify(tutorChatData)};
   document.getElementById('studentChatData').value = !{JSON.stringify(studentChatData)};
-  document.getElementById('personalTutorData').value = !{JSON.stringify(personalTutorData)};
 script(src="js/messageBoardView.js")

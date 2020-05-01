@@ -9,8 +9,6 @@ let formatMessage = require("../helpers/message").formatMessage;
 //Socketio
 io.on('connection', socket => {
     var roomID;
-    var useremail;
-    var userpfp;
     //Joins each chat that user is a part of
     socket.on('joinRoom', newID => {
         socket.join(newID)
@@ -18,17 +16,14 @@ io.on('connection', socket => {
     //Sets current room ID to access Firebase and when user sends message
     socket.on('currentRoom', chatroom => {
         roomID = chatroom.id;
-        useremail = chatroom.useremail;
-        userpfp = chatroom.prof_pic;
+        let useremail = chatroom.useremail;
 
         socket.removeAllListeners('chatMessage');
-        socket.removeAllListeners('sameroom');
 
         //Listens for chat message and adds message to Firebase
         let chatRef = db.collection('chatrooms').doc(`${roomID}`);
 
-        chatRef.get()
-        .then(doc => {
+        chatRef.get().then(doc => {
             var cont = true;
             var myChats = doc.data().chats;
             var i = myChats.length - 1;
@@ -50,50 +45,40 @@ io.on('connection', socket => {
             console.log(err)
         });
 
-        socket.on('chatMessage', msg => {
-            let message = formatMessage(roomID, `${useremail}`, userpfp, msg);
-            db.collection('chatrooms').doc(`${roomID}`).get()
-            .then(doc => {
-                if (!doc.exists) {
-                    console.log('No such document');
-                } else {
-                    var myChats = doc.data().chats;
-                    let newChat = {
-                        chat: message.chat,
-                        sender: message.sender,
-                        prof_pic: message.prof_pic,
-                        time: message.time,
-                        status: message.status
-                    }
-                    myChats.push(newChat);
-                    chatRef.update({
-                        chats: myChats
-                    });
+        socket.on('chatMessage', async msg => {
+            let message = formatMessage(roomID, useremail, msg);
+            const doc = await db.collection('chatrooms').doc(`${roomID}`).get()
+            if (!doc.exists) {
+                console.log('No such document');
+            } else {
+                var myChats = doc.data().chats;
+                let newChat = {
+                    chat: message.chat,
+                    sender: message.sender,
+                    time: message.time,
+                    status: message.status
                 }
-            }).catch((err) => {
-                console.log(err)
-            });
+                myChats.push(newChat);
+                chatRef.update({
+                    chats: myChats
+                });
+            }
             io.to(roomID).emit('message', message);
         });
 
-        // socket.on('changeStatus', message => {
-        //     let messageRef = db.collection('chatrooms').doc(`${message.room}`);
-        //     messageRef.get()
-        //     .then(doc => {
-        //         if (!doc.exists) {
-        //             console.log('No such document');
-        //         } else {
-        //             var myChats = doc.data().chats;
-        //             myChats[myChats.length].status = 'read';
-        //             console.log(myChats[myChats.length]);
-        //             // messageRef.update({
-        //             //     chats: myChats
-        //             // });
-        //         }
-        //     }).catch((err) => {
-        //         console.log(err)
-        //     });
-        // });
+        socket.on('changeStatus', async message => {
+            const doc = await db.collection('chatrooms').doc(`${message.room}`).get();
+            if (!doc.exists) {
+                console.log('No such document');
+            } else {
+                var myChats = doc.data().chats;
+                myChats[myChats.length - 1].status = 'read';
+                console.log(myChats[myChats.length - 1]);
+                db.collection('chatrooms').doc(`${message.room}`).update({
+                    chats: myChats
+                });
+            }
+        });
     });
     
     //Runs when user disconnects by leaving message board

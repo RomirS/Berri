@@ -3,31 +3,27 @@ const socket = io();
 var userData = document.getElementById('userData').value;
 var tutorChatData = document.getElementById('tutorChatData').value;
 var studentChatData = document.getElementById('studentChatData').value;
-var personalTutorData = document.getElementById('personalTutorData').value;
 
-var myTutors = [];
 var myStudents = [];
 var selectedRoom;
 let CHATMSGS = $('.chatMessages');
 let imgsrc = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAC0CAYAAAAuPxHvAAAAAXNSR0IArs4c6QAAAVlpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IlhNUCBDb3JlIDUuNC4wIj4KICAgPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4KICAgICAgPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIKICAgICAgICAgICAgeG1sbnM6dGlmZj0iaHR0cDovL25zLmFkb2JlLmNvbS90aWZmLzEuMC8iPgogICAgICAgICA8dGlmZjpPcmllbnRhdGlvbj4xPC90aWZmOk9yaWVudGF0aW9uPgogICAgICA8L3JkZjpEZXNjcmlwdGlvbj4KICAgPC9yZGY6UkRGPgo8L3g6eG1wbWV0YT4KTMInWQAAA8VJREFUeAHt0IEAAAAAw6D5Ux/khVBhwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAwYMGDBgwIABAy8DA0yhAAG/dsitAAAAAElFTkSuQmCC';
 
 //Outputs list of tutors under "Your Tutors"
-myTutors = userData.myTutors;
 let YT = $('#yourTutors');
-if (myTutors.length > 0) {
+if (tutorChatData.length > 0) {
     YT.css("display", "block");
-    renderChats(myTutors, yourTutors);
+    renderChats(tutorChatData, YT);
 } else {
     YT.css("display", "none");
 }
 
 //Ouputs list of students under "Your Students"
 if (userData.userType == "Registered Tutor") {
-    myStudents = personalTutorData.myStudents;
     let YS = $('#yourStudents');
-    if (myStudents.length > 0) {
+    if (studentChatData.length > 0) {
         YS.css("display", "block");
-        renderChats(myStudents, yourStudents);
+        renderChats(studentChatData, YS);
     } else {
         YS.css("display", "none");
     }
@@ -38,27 +34,16 @@ var chatData;
 
 function renderChats(arrayObj, divElement) {
     var loadTutor = false;
-    if (divElement.id == "yourTutors") {
+    if (divElement.attr('id') == 'yourTutors') {
         loadTutor = true;
     }
     //Load chats
     arrayObj.forEach(obj => {
         let CHAT = document.createElement("div");
         CHAT.classList.add("chat");
-        CHAT.innerHTML = `<img src=${obj.prof_pic} class="circleCrop" alt="Profile Pic"><h5>${obj.first} ${obj.last}</h5> <p></p>`;
-        var oldChatData;
-        if (loadTutor) {
-            CHAT.id = `${obj.email}?${userData.email}`;
-            oldChatData = tutorChatData.filter(chatObj => {
-                return chatObj.tutor === obj.email
-            });
-        } else {
-            CHAT.id = `${userData.email}?${obj.email}`;
-            oldChatData = studentChatData.filter(chatObj => {
-                return chatObj.student === obj.email
-            });
-        }
-        let chatArray = oldChatData[0].chats;
+        CHAT.innerHTML = `<img src=${imgsrc} class="circleCrop" alt="Profile Pic"><h5>${obj.other.first} ${obj.other.last}</h5> <p></p>`;
+        CHAT.id = obj.id;
+        let chatArray = obj.chats;
         if (chatArray.length > 0) {
             if (chatArray[chatArray.length - 1].status == 'unread' && chatArray[chatArray.length - 1].sender != userData.email) {
                 CHAT.style.fontWeight = "800";
@@ -67,12 +52,10 @@ function renderChats(arrayObj, divElement) {
             }
         }
         divElement.append(CHAT);
-
         socket.emit('joinRoom', CHAT.id);
-
-        CHAT.addEventListener("click", (e) => {
+        CHAT.addEventListener("click", () => {
             if (selectedRoom != CHAT.id) {
-                selectChat(obj, loadTutor, CHAT.id);
+                selectChat(obj, CHAT.id);
             }
         });
     });
@@ -80,17 +63,19 @@ function renderChats(arrayObj, divElement) {
     if (!executed) {
         executed = true;
         if (loadTutor) {
-            selectedRoom = `${arrayObj[0].email}?${userData.email}`;
+            selectedRoom = `${arrayObj[0].tutor}?${userData.email}`;
         } else {
-            selectedRoom = `${userData.email}?${arrayObj[0].email}`;
+            selectedRoom = `${userData.email}?${arrayObj[0].student}`;
         }
-        selectChat(arrayObj[0], loadTutor, selectedRoom);
+        selectChat(arrayObj[0], selectedRoom);
     }
 }
 
-function selectChat(person, loadTutor, chatID) {
-    $('#imgHeading').attr("src", person.prof_pic);
-    $('#chatHeading').text(`${person.first} ${person.last} for ${person.subjectChosen}`);
+var currentRef;
+var chatRef;
+function selectChat(obj, chatID) {
+    $('#imgHeading').attr("src", imgsrc);
+    $('#chatHeading').text(`${obj.other.first} ${obj.other.last} for ${obj.subject}`);
     CHATMSGS.empty();
     let LASTRM = document.getElementById(`${selectedRoom}`);
     let NEWRM = document.getElementById(`${chatID}`);
@@ -106,36 +91,22 @@ function selectChat(person, loadTutor, chatID) {
     selectedRoom = chatID;
 
     //Load chat data for clicked room
-    if (loadTutor) {
-        chatData = tutorChatData.filter(chatObj => {
-            return chatObj.tutor === person.email
-        });
-    } else {
-        chatData = studentChatData.filter(chatObj => {
-            return chatObj.student === person.email
-        });
-    }
-    let chatArr = chatData[0].chats;
-    if (chatData[0].chats.length != 0) {
-        for (i = 0; i < chatArr.length; i++) {
+    currentRef = obj;
+    chatRef = obj.chats;
+    if (chatRef.length != 0) {
+        for (let i = 0; i < chatRef.length; i++) {
             var toggleStyle = false;
-            if (i + 1 < chatArr.length) {
-                if (chatArr[i + 1].sender != chatArr[i].sender) {
-                    toggleStyle = true;
-                }
-            } else {
-                toggleStyle = true;
-            }
-            outputMessage(chatArr[i], toggleStyle);
+            if (i == chatRef.length - 1) toggleStyle = true; 
+            else if (chatRef[i + 1].sender != chatRef[i].sender) toggleStyle = true;
+            outputMessage(chatRef[i], toggleStyle);
         }
     } else {
-        chatData[0].chats = [];
+        chatRef = [];
     }
 
     let chatroom = {
         id: chatID,
-        useremail: userData.email,
-        prof_pic: userData.prof_pic
+        useremail: userData.email
     }
     socket.emit('currentRoom', chatroom);
 }
@@ -158,7 +129,7 @@ CHATFORM.addEventListener('submit', (e) => {
 socket.on('check', message => {
     if (message.sender != userData.email && message.room == selectedRoom) {
         console.log('here!');
-        socket.emit('sameroom', true);
+        socket.emit('changeStatus', message);
     }
 });
 
@@ -184,7 +155,7 @@ function outputMessage(message, toggleStyle) {
     } else {
         MSGDIV.classList.add('otherMsg');
         if (toggleStyle) {
-            MSGDIV.innerHTML = `<img src=${message.prof_pic} id = "chatpic" class = "circleCrop" alt="Chat Profile Pic"><p class="text">${message.chat}</p> <span>${message.time}</span>`;
+            MSGDIV.innerHTML = `<img src=${imgsrc} id = "chatpic" class = "circleCrop" alt="Chat Profile Pic"><p class="text">${message.chat}</p> <span>${message.time}</span>`;
         } else {
             MSGDIV.innerHTML = `<img src=${imgsrc} id = "chatpic" class = "circleCrop" alt=""><p class="text">${message.chat}</p> <span></span>`;
         }
@@ -198,13 +169,12 @@ function saveNewMessage(message) {
     var msg = {
             chat: message.chat,
             sender: message.sender,
-            prof_pic: message.prof_pic,
             time: message.time,
             status: message.status
         }
         //whenever user messages or person in the same room as user messages, this happens
     if (message.room == selectedRoom) {
-        chatData[0].chats.push(msg);
+        chatRef.push(msg);
         outputMessage(message, true);
     } else {
         document.getElementById(`${message.room}`).style.fontWeight = "600";

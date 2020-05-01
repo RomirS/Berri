@@ -18,15 +18,12 @@ module.exports = {
         if (age && subjects && city) {
             console.log("CREATING NEW TUTOR")
             req.session.tutorLogIn = true;
-            let docRef = db.collection('tutors').doc(req.session.userData["email"])
-            let setInfo = docRef.set({
+            db.collection('tutors').doc(req.session.userData["email"]).set({
                 age: age,
                 subjects: subjects,
-                city: city,
-                myStudents: []
+                city: city
             });
-            docRef = db.collection('users').doc(req.session.userData["email"])
-            setInfo = docRef.update({
+            db.collection('users').doc(req.session.userData["email"]).update({
                 userType: "Registered Tutor"
             });
             req.session.userData["userType"] = "Registered Tutor";

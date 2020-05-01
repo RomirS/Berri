@@ -28,10 +28,9 @@ module.exports = {
                     first: firstName,
                     last: lastName,
                     userType: "Student",
-                    prof_pic: "https://i.ibb.co/HtsTkv5/profile-pic.png",
-                    myTutors: []
+                    prof_pic: "https://i.ibb.co/HtsTkv5/profile-pic.png"
                 };
-                let setInfo = docRef.set(req.session.userData);
+                docRef.set(req.session.userData);
                 console.log("DONE!")
                 return res.redirect("/profile")
             }).catch((err) => {
