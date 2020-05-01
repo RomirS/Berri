@@ -13,46 +13,69 @@ function shuffle(array) {
 }
 
 module.exports = {
-    foundTutors: function(req,res) {
+    foundTutors: function(req, res) {
         if (req.session.loggedin) {
             req.session.foundTutorsList = [];
             req.session.chosenSubject = req.query.chosenSubject;
             if (req.session.chosenSubject) {
                 db.collection('tutors').get()
-                .then(snapshot => {
-                    snapshot.forEach(doc => {
-                        if (doc.data().subjects.includes(req.session.chosenSubject) && doc.id != req.session.userData["email"]) { 
-                            req.session.foundTutorsList.push({
-                                id: doc.id,
-                                data: doc.data()
-                            });       
-                        }
+                    .then(snapshot => {
+                        snapshot.forEach(doc => {
+                            if (doc.data().subjects.includes(req.session.chosenSubject) && doc.data().isActive && doc.id != req.session.userData["email"]) {
+                                req.session.foundTutorsList.push({
+                                    id: doc.id,
+                                    data: doc.data()
+                                });
+                            }
+                        });
+                        req.session.foundTutorsList = shuffle(req.session.foundTutorsList);
+                        req.session.foundTutorsIndex = 0;
+                        return res.redirect("/chooseTutor")
+                    }).catch(err => {
+                        console.log('Error getting documents', err);
                     });
-                    req.session.foundTutorsList = shuffle(req.session.foundTutorsList);
-                    req.session.foundTutorsIndex = 0;
-                    return res.redirect("/chooseTutor")
-                }).catch(err => {
-                    console.log('Error getting documents', err);
-                });
+            }
+        }
+    },
+    searchTutor: function(req, res) {
+        if (req.session.loggedin) {
+            req.session.foundTutorsList = [];
+            req.session.searchTutorEmail = req.query.searchTutor;
+            if (req.session.searchTutorEmail) {
+                db.collection('tutors').get()
+                    .then(snapshot => {
+                        snapshot.forEach(doc => {
+                            if (doc.id == req.session.searchTutorEmail && doc.id != req.session.userData["email"]) {
+                                req.session.foundTutorsList.push({
+                                    id: doc.id,
+                                    data: doc.data()
+                                });
+                            }
+                        });
+                        req.session.foundTutorsIndex = 0;
+                        return res.redirect("/chooseTutor")
+                    }).catch(err => {
+                        console.log('Error getting documents', err);
+                    });
             }
         }
     },
     chooseTutor: function(req, res) {
-        if (req.session.foundTutorsIndex >= req.session.foundTutorsList.length) {return res.redirect("/noTutorFound")};
+        if (req.session.foundTutorsIndex >= req.session.foundTutorsList.length) { return res.redirect("/noTutorFound") };
         let tutor = req.session.foundTutorsList[req.session.foundTutorsIndex];
         req.session.tutorData = tutor.data;
         db.collection('users').doc(tutor.id).get()
-        .then(doc => {
-            if (!doc.exists) {
-                console.log('No such document!');
-            } else {
-                req.session.tutorUserData = doc.data()
-                req.session.save()
-                return res.redirect("/tutorProfiles")
-            }
-        }).catch(err => {
-            console.log('Error1 getting document', err);
-        });
+            .then(doc => {
+                if (!doc.exists) {
+                    console.log('No such document!');
+                } else {
+                    req.session.tutorUserData = doc.data()
+                    req.session.save()
+                    return res.redirect("/tutorProfiles")
+                }
+            }).catch(err => {
+                console.log('Error1 getting document', err);
+            });
     },
     retryTutor: function(req, res) {
         if (req.session.loggedin) {

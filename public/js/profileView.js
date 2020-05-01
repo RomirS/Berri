@@ -15,6 +15,14 @@ if (isTutor) {
     tutorData.subjects.forEach(subject => {
         YESCONT.append(`<h3>${subject}</h3>`);
     });
+    if (tutorData.isActive) {
+        YESCONT.append('<h4 style="text-align:left; float:left; padding-left:2%; padding-top:15%; color:black">Activity Status: Active Tutor</h2>');
+        YESCONT.append('<div style="float:right; padding-top:15%"><a class="button" id="messagesBtn" style="background-color:green;" href="javascript:{}" onclick="document.getElementById(\'toggleStatus\').submit();">Toggle</a></div>');
+    } else {
+        YESCONT.append('<h4 style="text-align:left; float:left; padding-left:2%; padding-top:15%; color:black">Activity Status: Inactive Tutor</h2>');
+        YESCONT.append('<div style="float:right; padding-top:15%"><a class="button" id="messagesBtn" style="background-color:red;" href="javascript:{}" onclick="document.getElementById(\'toggleStatus\').submit();">Toggle</a></div>');
+    }
+
 } else {
     NOCONT.css("display", "block");
     YESCONT.css("display", "none");

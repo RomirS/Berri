@@ -38,12 +38,20 @@ head
           p Looks like you aren't a tutor yet!
           a(class = "button" href='/becomeTutor' id = "BecomeTutor") Become a Tutor
         #yesContent
+          form#toggleStatus(method="post" action="toggleActiveStatus")
           h2 YOUR SUBJECTS
     .box-4
       .section.dashboard
         form#submitForm(method="post" action="messageBoard")
           input(name="newTutor" value=false style="display:none")
           a(class="button" id="messagesBtn" href="javascript:{}" onclick="document.getElementById('submitForm').submit();") Messages
+        br
+        br
+        br
+        form#searchForm(method="get" action="searchTutor")
+          p(style="text-align:left") Search for Tutor by Email
+          input(name="searchTutor" placeholder="Tutor Email")
+          a(class="button" id="searchBtn" href="javascript:{}" style="color:black" onclick="document.getElementById('searchForm').submit();") Search
   form#signupformA(action='logout' method='post')
     .button(id = "fixedButton")
       input(type='submit' value='Logout')

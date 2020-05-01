@@ -5,9 +5,9 @@ const app = expressConfig();
 serverConfig();
 
 const { signup, postFeedback, loginAuth, googleSignup, logout, home } = require("./src/loginActions");
-const { profile, changeProfPic } = require("./src/profile");
+const { profile, changeProfPic, toggleActiveStatus } = require("./src/profile");
 const { becomeTutor, saveNewTutor } = require("./src/becomeTutorActions");
-const { foundTutors, chooseTutor, retryTutor, tutorProfiles, noTutorFound } = require("./src/findTutorActions");
+const { foundTutors, searchTutor, chooseTutor, retryTutor, tutorProfiles, noTutorFound } = require("./src/findTutorActions");
 const { messageBoard, deleteUser } = require("./src/messageBoard");
 
 //Logins
@@ -24,6 +24,7 @@ app
     .get('/becomeTutor', becomeTutor)
     .post('/saveNewTutor', saveNewTutor)
     .post("/changeProfPic", changeProfPic)
+    .post("/toggleActiveStatus", toggleActiveStatus)
 
 //Find tutor
 .get('/foundTutors', foundTutors)
@@ -31,6 +32,7 @@ app
     .get('/retryTutor', retryTutor)
     .get('/tutorProfiles', tutorProfiles)
     .get('/noTutorFound', noTutorFound)
+    .get('/searchTutor', searchTutor)
 
 //Message Board
 .post('/messageBoard', messageBoard)

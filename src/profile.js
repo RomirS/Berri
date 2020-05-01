@@ -59,5 +59,22 @@ module.exports = {
                     console.log('Error getting document', err);
                 });
         }
+    },
+    toggleActiveStatus: function(req, res) {
+        if (req.session.loggedin) {
+            let docRef = db.collection('tutors').doc(req.session.userData["email"]);
+            let userRef = docRef.get()
+            userRef.then(doc => {
+                    let setInfo = docRef.update({
+                        isActive: !req.session.tutorData.isActive
+                    })
+                    setInfo.then(done => {
+                        return res.redirect("/profile")
+                    })
+                })
+                .catch(err => {
+                    console.log('Error getting document', err);
+                });
+        }
     }
 }
