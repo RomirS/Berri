@@ -15,6 +15,7 @@ module.exports = {
         var age = req.body.age;
         var city = req.body.city;
         var subjects = req.body.subjects;
+        req.session.tutorSubjects = subjects;
         if (age && subjects && city) {
             console.log("CREATING NEW TUTOR")
             req.session.tutorLogIn = true;

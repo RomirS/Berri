@@ -38,7 +38,7 @@ io.on('connection', socket => {
                 }
                 i--;
             }
-            chatRef.update ({
+            chatRef.update({
                 chats: myChats
             });
         }).catch((err) => {
@@ -47,22 +47,17 @@ io.on('connection', socket => {
 
         socket.on('chatMessage', async msg => {
             let message = formatMessage(roomID, useremail, msg);
-            const doc = await db.collection('chatrooms').doc(`${roomID}`).get()
-            if (!doc.exists) {
-                console.log('No such document');
-            } else {
-                var myChats = doc.data().chats;
-                let newChat = {
-                    chat: message.chat,
-                    sender: message.sender,
-                    time: message.time,
-                    status: message.status
-                }
-                myChats.push(newChat);
-                chatRef.update({
-                    chats: myChats
-                });
-            }
+            const doc = await db.collection('chatrooms').doc(`${roomID}`).get();
+            var myChats = doc.data().chats;
+            myChats.push({
+                chat: message.chat,
+                sender: message.sender,
+                time: message.time,
+                status: message.status
+            });
+            await chatRef.update({
+                chats: myChats
+            });
             io.to(roomID).emit('message', message);
         });
 
@@ -73,19 +68,18 @@ io.on('connection', socket => {
             } else {
                 var myChats = doc.data().chats;
                 myChats[myChats.length - 1].status = 'read';
-                console.log(myChats[myChats.length - 1]);
                 db.collection('chatrooms').doc(`${message.room}`).update({
                     chats: myChats
                 });
             }
         });
     });
-    
+
     //Runs when user disconnects by leaving message board
     socket.on('disconnect', () => {
         console.log(`DISCONNECTED! from ${roomID}`)
     });
 });
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 8000;
 module.exports = function() { http.listen(PORT, () => console.log(`Server running on port ${PORT}`)); };

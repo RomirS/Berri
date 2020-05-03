@@ -5,6 +5,7 @@ head
   meta(http-equiv='X-UA-Compatible' content='ie-edge')
   title #{title}
   script(src="//code.jquery.com/jquery-3.4.1.min.js")
+  script(src="https://momentjs.com/downloads/moment.js")
   link(rel='stylesheet' type='text/css' href='css/style.css')
   link(rel='stylesheet' type='text/css' href='css/profile.css')
   link(rel='stylesheet' type='text/css' href='css/messageBoard.css')
@@ -14,12 +15,12 @@ head
   .box-1
     #searchMenu
       input(type="text" name="search" placeholder="Search you chats..." autocomplete="off")
+    .head 
+      h2 YOUR TUTORS
     #yourTutors
-      .head 
-        h2 YOUR TUTORS
+    .head 
+      h2 YOUR STUDENTS
     #yourStudents
-      .head 
-        h2 YOUR STUDENTS
   .box-2
     .chat-header
       img.circleCrop#imgHeading(src=userData.prof_pic alt='Profile Pic')

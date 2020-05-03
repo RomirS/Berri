@@ -65,6 +65,7 @@
   }
   
   .circleCrop {
+      object-fit: cover;
       border-radius: 50%;
   }
   
@@ -186,12 +187,11 @@
       margin: 5px;
   }
   
-  #FindTutor,
   #BecomeTutor {
       background: rgb(253, 145, 145);
       border-radius: 5px;
-      width: 250px;
-      margin-left: 20px;
+      width: auto;
+      margin: 0;
       line-height: 280%;
   }
   

@@ -1,32 +1,43 @@
 const db = require("../utils/firebaseConfig")();
 let chatrooms = db.collection('chatrooms');
+let formatMessage = require("../helpers/message").formatMessage;
 
 module.exports = {
     messageBoard: function(req, res) {
         if (req.session.loggedin) {
             let newTutor = req.body.newTutor;
             let userid = req.session.userData["email"];
-            let tutorid = req.session.tutorData.email;
-            let room = `${tutorid}?${userid}`;
 
             //Adds chatroom for tutor and student in Firebase to store messages
             if (newTutor == 'true') {
+                let tutorid = req.session.tutorUserData.email;
+                let room = `${tutorid}?${userid}`;
                 chatrooms.get().then(snapshot => {
                     var found = false;
                     snapshot.forEach(doc => {
                         if (doc.id == room) found = true;
                     });
                     if (!found) {
+                        let firstChat = formatMessage(room, '?', '')
                         chatrooms.doc(room).set({
                             tutor: tutorid,
                             student: userid,
                             subject: req.session.chosenSubject,
-                            chats: []
+                            chats: [{
+                                chat: firstChat.chat,
+                                sender: firstChat.sender,
+                                time: firstChat.time,
+                                status: firstChat.status
+                            }]
                         });
                     }
+                }).then( () => {
+                    renderMessageBoard();
                 }).catch(err => {
                     console.log('Error getting document', err);
                 });
+            } else {
+                renderMessageBoard();
             }
 
             async function renderMessageBoard() {
@@ -48,11 +59,11 @@ module.exports = {
                             studentChatData: req.session.userData['userType']
                         });
                     }
-                } catch(err) {
+                } catch (err) {
                     console.log(err);
                 }
             }
-            renderMessageBoard();
+
         } else {
             res.redirect("/");
         }
@@ -63,16 +74,15 @@ module.exports = {
 }
 
 function getChatData(id, type, pfpType) {
-    return new Promise (async (resolve, reject) => {
+    return new Promise(async(resolve, reject) => {
         try {
             const snapshot = await chatrooms.where(`${type}`, '==', `${id}`).get();
             var rooms = [];
             snapshot.forEach(chatroom => {
                 rooms.push({ 'id': chatroom.id, 'data': chatroom.data() });
             });
-            const arr = await handleRooms(rooms, pfpType)
+            const arr = await handleRooms(rooms, pfpType);
             resolve(arr);
-            
         } catch (err) {
             reject(err);
         }
@@ -82,7 +92,7 @@ function getChatData(id, type, pfpType) {
 function handleRooms(rooms, pfpType) {
     return new Promise((resolve, reject) => {
         var arr = [];
-        asyncForEach(rooms, async (chatroom, index) => {
+        asyncForEach(rooms, async(chatroom) => {
             try {
                 let data = chatroom.data;
                 const doc = await db.collection('users').doc(data[`${pfpType}`]).get();
@@ -95,16 +105,19 @@ function handleRooms(rooms, pfpType) {
                     'tutor': data.tutor,
                     'other': { 'first': otherData.first, 'last': otherData.last, 'profPic': otherData.prof_pic }
                 });
-                if (index === rooms.length -1) resolve(arr);
             } catch (err) {
                 reject(err);
             }
+        }).then(() => {
+            resolve(arr);
+        }).catch(err => {
+            console.log(err)
         });
     });
 }
 
 async function asyncForEach(array, callback) {
     for (let index = 0; index < array.length; index++) {
-      await callback(array[index], index, array);
+        await callback(array[index], index, array);
     }
 }

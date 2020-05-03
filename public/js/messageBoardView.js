@@ -4,6 +4,18 @@ var userData = document.getElementById('userData').value;
 var tutorChatData = document.getElementById('tutorChatData').value;
 var studentChatData = document.getElementById('studentChatData').value;
 
+function compareTimes(a,b) {
+    let time1 = new Date(a.chats[a.chats.length-1].time.slice(0,19));
+    let time2 = new Date(b.chats[b.chats.length-1].time.slice(0,19));
+    if (time1 > time2) return -1;
+    else if (time1 < time2) return 1;
+    else return 0;
+}
+
+tutorChatData.sort(compareTimes);
+if (userData.userType == "Registered Tutor") studentChatData.sort(compareTimes);
+
+
 var myStudents = [];
 var selectedRoom;
 let CHATMSGS = $('.chatMessages');
@@ -12,69 +24,65 @@ let imgsrc = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAC0CAYAAAAuPxHv
 //Outputs list of tutors under "Your Tutors"
 let YT = $('#yourTutors');
 if (tutorChatData.length > 0) {
-    YT.css("display", "block");
+    YT.prev().css('display', 'block');
     renderChats(tutorChatData, YT);
-} else {
-    YT.css("display", "none");
 }
 
 //Ouputs list of students under "Your Students"
-if (userData.userType == "Registered Tutor") {
-    let YS = $('#yourStudents');
-    if (studentChatData.length > 0) {
-        YS.css("display", "block");
-        renderChats(studentChatData, YS);
-    } else {
-        YS.css("display", "none");
-    }
+let YS = $('#yourStudents');
+if (userData.userType == "Registered Tutor" && studentChatData.length > 0) {
+    YS.prev().css('display', 'block');
+    renderChats(studentChatData, YS);
 }
 
 var executed = false;
-var chatData;
 
 function renderChats(arrayObj, divElement) {
-    var loadTutor = false;
-    if (divElement.attr('id') == 'yourTutors') {
-        loadTutor = true;
-    }
     //Load chats
     arrayObj.forEach(obj => {
-        let CHAT = document.createElement("div");
-        CHAT.classList.add("chat");
-        CHAT.innerHTML = `<img src=${imgsrc} class="circleCrop" alt="Profile Pic"><h5>${obj.other.first} ${obj.other.last}</h5> <p></p>`;
-        CHAT.id = obj.id;
-        let chatArray = obj.chats;
-        if (chatArray.length > 0) {
-            if (chatArray[chatArray.length - 1].status == 'unread' && chatArray[chatArray.length - 1].sender != userData.email) {
-                CHAT.style.fontWeight = "800";
-            } else {
-                CHAT.style.fontWeight = "200";
-            }
-        }
-        divElement.append(CHAT);
-        socket.emit('joinRoom', CHAT.id);
-        CHAT.addEventListener("click", () => {
-            if (selectedRoom != CHAT.id) {
-                selectChat(obj, CHAT.id);
-            }
-        });
+        divElement.append(createChat(obj, arrayObj.indexOf(obj)));
+        socket.emit('joinRoom', obj.id);
     });
     //Join default room
     if (!executed) {
         executed = true;
-        if (loadTutor) {
+        if (divElement.attr('id') == 'yourTutors') {
             selectedRoom = `${arrayObj[0].tutor}?${userData.email}`;
         } else {
             selectedRoom = `${userData.email}?${arrayObj[0].student}`;
         }
-        selectChat(arrayObj[0], selectedRoom);
+        selectChat(arrayObj[0]);
     }
+}
+
+function createChat(obj, orderNum) {
+    let CHAT = document.createElement("div");
+    CHAT.style.order = orderNum;
+    CHAT.classList.add("chat");
+    let chatArray = obj.chats;
+    CHAT.innerHTML = `<img src=${obj.other.profPic} class="circleCrop" alt="Profile Pic"><h5>${obj.other.first} ${obj.other.last}</h5> <p>${chatArray[chatArray.length - 1].chat}</p>`;
+    CHAT.id = obj.id;
+    let lastChat = chatArray[chatArray.length-1];
+    if (lastChat.status == 'unread' && lastChat.sender != userData.email) {
+        CHAT.style.fontWeight = "800";
+        CHAT.getElementsByTagName('p')[0].style.fontWeight = "800";
+    } else {
+        CHAT.style.fontWeight = "200";
+        CHAT.getElementsByTagName('p')[0].style.fontWeight = "200";
+    }
+    CHAT.addEventListener("click", () => {
+        if (selectedRoom != CHAT.id) {
+            selectChat(obj);
+        }
+    });
+    return CHAT;
 }
 
 var currentRef;
 var chatRef;
-function selectChat(obj, chatID) {
-    $('#imgHeading').attr("src", imgsrc);
+function selectChat(obj) {
+    let chatID = obj.id;
+    $('#imgHeading').attr("src", obj.other.profPic);
     $('#chatHeading').text(`${obj.other.first} ${obj.other.last} for ${obj.subject}`);
     CHATMSGS.empty();
     let LASTRM = document.getElementById(`${selectedRoom}`);
@@ -88,22 +96,17 @@ function selectChat(obj, chatID) {
     });
     NEWRM.style.background = "rgba(253, 145, 145, 0.486)";
     NEWRM.style.fontWeight = "200";
+    NEWRM.getElementsByTagName('p')[0].style.fontWeight = "200";
     selectedRoom = chatID;
 
     //Load chat data for clicked room
     currentRef = obj;
     chatRef = obj.chats;
-    if (chatRef.length != 0) {
-        for (let i = 0; i < chatRef.length; i++) {
-            var toggleStyle = false;
-            if (i == chatRef.length - 1) toggleStyle = true; 
-            else if (chatRef[i + 1].sender != chatRef[i].sender) toggleStyle = true;
-            outputMessage(chatRef[i], toggleStyle);
+    if (chatRef.length > 1) {
+        for (let i = 1; i < chatRef.length; i++) {
+            outputMessage(chatRef[i], obj.other.profPic);
         }
-    } else {
-        chatRef = [];
     }
-
     let chatroom = {
         id: chatID,
         useremail: userData.email
@@ -126,13 +129,6 @@ CHATFORM.addEventListener('submit', (e) => {
     }
 });
 
-socket.on('check', message => {
-    if (message.sender != userData.email && message.room == selectedRoom) {
-        console.log('here!');
-        socket.emit('changeStatus', message);
-    }
-});
-
 //Handles message that has been sent to user
 socket.on('message', message => {
     saveNewMessage(message);
@@ -141,46 +137,26 @@ socket.on('message', message => {
     }
 });
 
-//outputs new message to front end
-function outputMessage(message, toggleStyle) {
-    let MSGDIV = document.createElement('div');
-    MSGDIV.classList.add('message');
-    if (message.sender == userData.email) {
-        MSGDIV.classList.add('userMsg');
-        if (toggleStyle) {
-            MSGDIV.innerHTML = `<p class="text">${message.chat}</p> <span>${message.time}</span>`;
-        } else {
-            MSGDIV.innerHTML = `<p class="text">${message.chat}</p> <span></span>`;
-        }
-    } else {
-        MSGDIV.classList.add('otherMsg');
-        if (toggleStyle) {
-            MSGDIV.innerHTML = `<img src=${imgsrc} id = "chatpic" class = "circleCrop" alt="Chat Profile Pic"><p class="text">${message.chat}</p> <span>${message.time}</span>`;
-        } else {
-            MSGDIV.innerHTML = `<img src=${imgsrc} id = "chatpic" class = "circleCrop" alt=""><p class="text">${message.chat}</p> <span></span>`;
-        }
-    }
-    CHATMSGS.append(MSGDIV);
-    CHATMSGS[0].scrollTop = CHATMSGS[0].scrollHeight;
-}
-
 //saves message to browser side data
 function saveNewMessage(message) {
     var msg = {
-            chat: message.chat,
-            sender: message.sender,
-            time: message.time,
-            status: message.status
-        }
-        //whenever user messages or person in the same room as user messages, this happens
+        chat: message.chat,
+        sender: message.sender,
+        time: message.time,
+        status: message.status
+    }
+    let CHAT = document.getElementById(`${message.room}`);
+    CHAT.getElementsByTagName('p')[0].innerHTML = message.chat;
+    rearrangeChats(message);
     if (message.room == selectedRoom) {
         chatRef.push(msg);
-        outputMessage(message, true);
+        outputMessage(message, currentRef.other.profPic);
     } else {
-        document.getElementById(`${message.room}`).style.fontWeight = "600";
-        let senderType = findSenderType(message.room, message.sender);
-        var bgChatData;
+        CHAT.style.fontWeight = "800";
+        CHAT.getElementsByTagName('p')[0].style.fontWeight = "800";
         //finds reference to user's browser data for the specific chat that has been messaged
+        let senderType = findSenderType(message);
+        var bgChatData;
         if (senderType == 'tutor') {
             bgChatData = tutorChatData.filter(obj => {
                 return obj.tutor === message.sender
@@ -198,10 +174,65 @@ function saveNewMessage(message) {
     }
 }
 
-function findSenderType(roomID, sender) {
-    if (roomID.indexOf('?') > roomID.indexOf(sender)) {
+//outputs new message to front end
+function outputMessage(message, pfp) {
+    let MSGDIV = document.createElement('div');
+    MSGDIV.classList.add('message');
+    let millTime = message.time.substring(0, 20);
+    let fixedTime = message.time.slice(20);
+    if (message.sender == userData.email) {
+        MSGDIV.classList.add('userMsg');
+        MSGDIV.innerHTML = `<p class="text">${message.chat}</p> <span>${fixedTime}</span>`;
+    } else {
+        MSGDIV.classList.add('otherMsg');
+        MSGDIV.innerHTML = `<img src=${pfp} id = "chatpic" class = "circleCrop" alt="Chat Profile Pic"><p class="text">${message.chat}</p> <span>${fixedTime}</span>`;
+    }
+    MSGDIV.setAttribute('time', millTime);
+    removeLastMessageStyle(message.sender, millTime);
+    CHATMSGS.append(MSGDIV);
+    CHATMSGS[0].scrollTop = CHATMSGS[0].scrollHeight;
+}
+
+function removeLastMessageStyle(sender, time) {
+    let LASTMSG = $('.chatMessages .message').last();
+    let newTime = new Date(time);
+    let prevTime = new Date(LASTMSG.attr('time'));
+    let timeDiff = Math.floor( (newTime-prevTime)/60000 );
+    if (LASTMSG.length > 0 && timeDiff < 5) {
+        var CLASSLIST = LASTMSG.attr('class').split(/\s+/);
+        if (CLASSLIST[1] == 'userMsg' && sender == userData.email) {
+            LASTMSG.find('span')[0].innerText = '';
+        } else if (CLASSLIST[1] == 'otherMsg' && sender != userData.email) {
+            LASTMSG.find('span')[0].innerText = '';
+            LASTMSG.find('img')[0].src = imgsrc;
+        }
+    }
+}
+
+function findSenderType(message) {
+    if (message.room.indexOf('?') > message.room.indexOf(message.sender)) {
         return 'tutor'
     } else {
         return 'student'
+    }
+}
+
+function findRoomType(message) {
+    if (message.room.indexOf('?') > message.room.indexOf(userData.email)) {
+        return 'tutor'
+    } else {
+        return 'student'
+    }
+}
+
+function rearrangeChats(message) {
+    let type = findRoomType(message);
+    var chats;
+    if (type == 'student') chats = document.getElementById("yourTutors").getElementsByTagName("div");
+    else chats = document.getElementById("yourStudents").getElementsByTagName("div");
+    for (let i = 0; i < chats.length; i++) {
+        let divEl = chats[i]
+        if (divEl.id == message.room) divEl.style.order = 0;
+        else divEl.style.order = (parseInt(divEl.style.order) + 1);
     }
 }

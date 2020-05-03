@@ -1,7 +1,7 @@
 const firebase = require("firebase");
 const admin = require("firebase-admin");
 // for romir: 
-// const serviceAccount = require("/Users/romirsingla/Desktop/serviceAccountKey.json");
+const serviceAccount = require("/Users/romirsingla/Desktop/serviceAccountKey.json");
 
 // for sohan:
 // const serviceAccount = require("C:/Users/rayha/Desktop/serviceAccountKey.json");

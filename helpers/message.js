@@ -6,7 +6,7 @@ module.exports = {
             room,
             sender,
             chat,
-            time: moment().format('h:mm a'),
+            time: moment().format('L HH:mm:ss h:mm a'),
             status: 'unread'
         };
     }

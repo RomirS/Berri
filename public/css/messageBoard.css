@@ -12,12 +12,14 @@
     border-top-left-radius: 10px;
     border-bottom-left-radius: 10px;
     border-right: 2px solid rgb(228, 227, 227);
+    max-width: 25%;
 }
 
 .box-2 {
     flex: 3;
     background: transparent;
     position: relative;
+    max-width: 75%;
 }
 
 #searchMenu {
@@ -26,39 +28,43 @@
 
 .head {
     text-align: center;
+    display: none;
 }
 
 .head h2 {
     color: rgba(172, 170, 170, 0.466);
     margin: 0 auto;
+    height: 5%;
     padding: 5px 0;
     font-weight: 500;
 }
 
 #yourTutors {
-    display: none;
+    display: flex !important;
+    flex-direction: column;
     height: auto;
-    max-height: 45%;
-    overflow-y: scroll;
-    border-top: 2px solid rgb(228, 227, 227);
+    max-height: 40%;
+    overflow: scroll !important;
 }
 
 #yourStudents {
-    display: none;
+    display: flex !important;
+    flex-direction: column;
     height: auto;
-    max-height: 45%;
-    overflow-y: scroll;
-    border-top: 2px solid rgb(228, 227, 227);
+    max-height: 40%;
+    overflow: scroll !important;
 }
 
 .chat {
     position: relative;
     background: transparent;
-    height: 80px;
-    line-height: 80px;
+    width: auto;
+    height: 80px !important;
+    line-height: 80px !important;
     margin: 1px 8px;
     border-radius: 20px;
     overflow-x: hidden;
+    overflow-y: hidden;
 }
 
 .chat:hover {
@@ -129,6 +135,7 @@ h5 {
 .userMsg .text {
     width: auto;
     max-width: 45%;
+    word-wrap: break-word;
     float: right;
     text-align: left;
     margin: 0;
@@ -142,6 +149,7 @@ h5 {
 .otherMsg .text {
     width: auto;
     max-width: 45%;
+    word-wrap: break-word;
     float: left;
     text-align: left;
     margin: 0;
@@ -179,6 +187,7 @@ h5 {
     float: left;
     transform: translateY(50%);
 }
+
 
 /* .message .meta {
     width: 100%;
