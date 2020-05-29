@@ -43,7 +43,7 @@
     display: flex !important;
     flex-direction: column;
     height: auto;
-    max-height: 40%;
+    max-height: 38%;
     overflow: scroll !important;
 }
 
@@ -51,7 +51,7 @@
     display: flex !important;
     flex-direction: column;
     height: auto;
-    max-height: 40%;
+    max-height: 38%;
     overflow: scroll !important;
 }
 
@@ -59,12 +59,9 @@
     position: relative;
     background: transparent;
     width: auto;
-    height: 80px !important;
-    line-height: 80px !important;
+    line-height: 80px;
     margin: 1px 8px;
     border-radius: 20px;
-    overflow-x: hidden;
-    overflow-y: hidden;
 }
 
 .chat:hover {

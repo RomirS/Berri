@@ -42,7 +42,7 @@ head
         input#passwordRepeat.form-control(type='password' name='passwordRepeat' placeholder='Repeat Password' required='')
       .button.in-line
         input(type='submit' value='Sign Up')
-      div.g-signin2(data-onsuccess="onSignIn" data-prompt="select_account consent").in-line 
+      div.g-signin2.in-line (data-onsuccess="onSignIn" data-prompt="select_account consent")
       p Already have an account? #[a(href='/') Sign in]
         
 

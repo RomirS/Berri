@@ -188,23 +188,27 @@ function outputMessage(message, pfp) {
         MSGDIV.innerHTML = `<img src=${pfp} id = "chatpic" class = "circleCrop" alt="Chat Profile Pic"><p class="text">${message.chat}</p> <span>${fixedTime}</span>`;
     }
     MSGDIV.setAttribute('time', millTime);
-    removeLastMessageStyle(message.sender, millTime);
+    toggleLastMessageStyle(message.sender, millTime);
     CHATMSGS.append(MSGDIV);
     CHATMSGS[0].scrollTop = CHATMSGS[0].scrollHeight;
 }
 
-function removeLastMessageStyle(sender, time) {
+function toggleLastMessageStyle(sender, time) {
     let LASTMSG = $('.chatMessages .message').last();
     let newTime = new Date(time);
     let prevTime = new Date(LASTMSG.attr('time'));
     let timeDiff = Math.floor( (newTime-prevTime)/60000 );
-    if (LASTMSG.length > 0 && timeDiff < 5) {
-        var CLASSLIST = LASTMSG.attr('class').split(/\s+/);
-        if (CLASSLIST[1] == 'userMsg' && sender == userData.email) {
-            LASTMSG.find('span')[0].innerText = '';
-        } else if (CLASSLIST[1] == 'otherMsg' && sender != userData.email) {
-            LASTMSG.find('span')[0].innerText = '';
-            LASTMSG.find('img')[0].src = imgsrc;
+    if (LASTMSG.length > 0) {
+        if (timeDiff < 5) {
+            var CLASSLIST = LASTMSG.attr('class').split(/\s+/);
+            if (CLASSLIST[1] == 'userMsg' && sender == userData.email) {
+                LASTMSG.find('span')[0].innerText = '';
+            } else if (CLASSLIST[1] == 'otherMsg' && sender != userData.email) {
+                LASTMSG.find('span')[0].innerText = '';
+                LASTMSG.find('img')[0].src = imgsrc;
+            }
+        } else {
+            LASTMSG[0].lastChild.style.marginBottom = '15px';
         }
     }
 }

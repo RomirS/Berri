@@ -2,7 +2,7 @@
     "name": "Berri",
     "version": "1.0.0",
     "description": "",
-    "main": "index.js",
+    "main": "app.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
         "start": "node ./app.js",
@@ -20,6 +20,7 @@
         "express-validator": "^6.4.0",
         "firebase": "^7.10.0",
         "firebase-admin": "^8.9.2",
+        "formidable": "^1.2.2",
         "html": "^1.0.0",
         "jquery": "^3.4.1",
         "moment": "^2.24.0",

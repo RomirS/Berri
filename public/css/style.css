@@ -87,7 +87,6 @@ input[type=text] {
     width: 80%;
     margin: 15px auto;
     border: 0;
-    border-bottom: 1px solid lightgrey;
     padding: 12px 0;
     outline: 0;
     font-size: 15px;
@@ -109,28 +108,27 @@ input[type=password] {
 }
 
 .button {
+    position: relative;
     box-shadow: 0 3px 12px rgba(0, 0, 0, 0.23), 0 3px 12px rgba(0, 0, 0, 0.16);
     height: 56px;
     width: 120px;
     border-radius: 28px;
-    position: relative;
-    margin-right: 20px;
-    font: 1000 20px Roboto;
+    font-weight: 1000;
+    font-size: 20px;
     cursor: pointer;
     /*transition: .3s .7s, background .1s .3s;*/
 }
 
-input[type=submit] {
-    width: 100%;
-    border: 0px;
-    border-radius: 28px;
+.button input[type=submit] {
     position: absolute;
     top: 0;
     bottom: 0;
-    color: rgb(253, 145, 145);
+    width: 100%;
+    border: 0px;
+    border-radius: 28px;
     font: 1000 20px Roboto;
+    color: rgb(253, 145, 145);
     cursor: pointer;
-    transition: .5s;
 }
 
 .in-line {
@@ -147,6 +145,10 @@ input[type=submit] {
 *:before,
 *:after {
     box-sizing: border-box;
+}
+
+.g-signin2 {
+    margin-left: 20px;
 }
 
 

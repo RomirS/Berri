@@ -101,3 +101,16 @@ module.exports = {
         res.send("Could not find a tutor.");
     }
 };
+
+
+// app.get("/findTutor", (req, res) => {
+//     if (req.session.loggedin) {
+//         console.log(req.session.tutorSubjects)
+//         res.render("findTutor", {
+//             title: "Find a Tutor",
+//             tutorSubjects: req.session.tutorSubjects
+//         })
+//     } else {
+//         res.redirect("/")
+//     }
+// })

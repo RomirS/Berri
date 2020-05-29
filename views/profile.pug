@@ -6,6 +6,7 @@ head
   script(src="//code.jquery.com/jquery-3.4.1.min.js")
   link(rel='stylesheet' type='text/css' href='css/style.css')
   link(rel='stylesheet' type='text/css' href='css/profile.css')
+  link(rel='stylesheet' type='text/css' href='css/animations.css')
   link(href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700' rel='stylesheet' type='text/css')
   //script(src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js")
   //script(src="https://harvesthq.github.io/chosen/chosen.jquery.js")
@@ -14,47 +15,50 @@ head
 
   .row
     .box-1
-      .section
-        .imageSection
-          img.prof.circleCrop(src=userData.prof_pic alt='Profile Pic')
-          div.overlay.circleCrop(onclick="changeProfPic()") Change Profile Picture
+      .imageSection.circleCrop.verticalAlign
+        img#prof.circleCrop(src = userData.prof_pic alt='Profile Pic' onclick="newProfPic()")
+        .overlay.circleCrop(onclick="newProfPic()")
+          #pfpText(onclick="newProfPic()") Change Profile Picture
     .box-2
-      .section
-        #headerSection
-          h1 Hello, #{userData.first}      
-          form#subjectForm(method="GET" action="foundTutors")
-            .dropdown 
-              input(id="chooseSubjectText" type='text' name='chosenSubject' placeholder='What do you need help with?' autocomplete="off")
-              #dropdown-content
-              #goBtn
-                input(type='submit' value='→')
-            br
-            br
-              
+      .section#headerSection
+        .heading Hello, #{userData.first}      
+        form#accessMessageBoard(method="post" action="messageBoard")
+          input(name="newTutor" value=false style="display:none")
+        .imgContainer.circleCrop
+          img(src="https://i.postimg.cc/W4dRsw-RV/speech-bubble.png" onclick="document.getElementById('accessMessageBoard').submit()")
   .row
     .box-3
-      .section.removePadding
+      .section#sect3
         #noContent
           p Looks like you aren't a tutor yet!
-          a(class = "button" href='/becomeTutor' id = "BecomeTutor") Become a Tutor
+          a.button#becomeTutor(href='/becomeTutor') Become a Tutor
         #yesContent
+          #yourSubjects Your Subjects
+          #subjects
+          #status
           form#toggleStatus(method="post" action="toggleActiveStatus")
-          h2 YOUR SUBJECTS
+            .button
+              input(type='submit' value='Toggle')
+
     .box-4
-      .section.dashboard
-        form#submitForm(method="post" action="messageBoard")
-          input(name="newTutor" value=false style="display:none")
-          a(class="button" id="messagesBtn" href="javascript:{}" onclick="document.getElementById('submitForm').submit();") Messages
-        br
-        br
-        br
-        form#searchForm(method="get" action="searchTutor")
-          p(style="text-align:left") Search for Tutor by Email
-          input(name="searchTutor" placeholder="Tutor Email")
-          a(class="button" id="searchBtn" href="javascript:{}" style="color:black" onclick="document.getElementById('searchForm').submit();") Search
+      .section.column
+        .col-1
+          form#subjectForm(method="GET" action="foundTutors")
+            .dropdown
+              input.greyBubble#chooseSubject(type='text' name='chosenSubject' placeholder='What do you need help with?' autocomplete="off")
+              #dropdownContent
+            input.greyBubble(type='submit' value='→')
+        .col-2
+          .heading ...or search tutors by
+          form#searchForm(method="get" action="searchTutor")
+            input.greyBubble#searchEmails(type='text' name="searchTutor" placeholder="email")
+            //- a(class="button" id="searchBtn" href="javascript:{}" style="color:black" onclick="document.getElementById('searchForm').submit();") Search
   form#signupformA(action='logout' method='post')
     .button(id = "fixedButton")
       input(type='submit' value='Logout')
+
+form#newPfpForm(action='newPfp' method='post' style = "display:none" enctype="multipart/form-data")
+  input#myFile(type='file' name='pfp')
 
 p.hidden(id='userData')
 p.hidden(id='tutorData')
@@ -64,5 +68,6 @@ script.
   document.getElementById('userData').value = !{JSON.stringify(userData)};
   document.getElementById('tutorData').value = !{JSON.stringify(tutorData)};
   document.getElementById('tutorSubjects').value = !{JSON.stringify(tutorSubjects)};
+
 script(src="js/profileView.js")
 
