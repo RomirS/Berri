@@ -127,6 +127,7 @@ input[type=password] {
     border: 0px;
     border-radius: 28px;
     font: 1000 20px Roboto;
+    background: white;
     color: rgb(253, 145, 145);
     cursor: pointer;
 }

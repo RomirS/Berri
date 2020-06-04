@@ -1,14 +1,12 @@
-const expressConfig = require("./utils/expressConfig");
-const serverConfig = require("./utils/serverConfig");
+import { ChatServer } from './utils/chatServer';
 
-const app = expressConfig();
-serverConfig();
+let app = new ChatServer().getApp();
 
-const { signup, postFeedback, loginAuth, googleSignup, logout, home } = require("./src/loginActions");
-const { profile, toggleActiveStatus, newPfp } = require("./src/profile");
-const { becomeTutor, saveNewTutor } = require("./src/becomeTutorActions");
-const { foundTutors, searchTutor, chooseTutor, retryTutor, tutorProfiles, noTutorFound } = require("./src/findTutorActions");
-const { messageBoard, deleteUser } = require("./src/messageBoard");
+import { signup, postFeedback, googleSignup, loginAuth, logout, home } from './src/loginActions';
+import { profile, toggleActiveStatus, newPfp } from './src/profile';
+import { becomeTutor, saveNewTutor } from './src/becomeTutorActions';
+import { foundTutors, searchTutor, chooseTutor, retryTutor, tutorProfiles, noTutorFound } from './src/findTutorActions';
+import { messageBoard, deleteUser } from './src/messageBoard';
 
 //Logins
 app
