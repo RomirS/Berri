@@ -148,7 +148,7 @@ temp/
 .history
 
 #SAK#
-mod/serviceAccountKey
+mod/serviceAccountKey.json
 
 built/
 
