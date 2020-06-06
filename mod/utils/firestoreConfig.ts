@@ -1,10 +1,6 @@
 import firebase from 'firebase';
 import admin from 'firebase-admin';
-// for romir: 
 import serviceAccount from '../serviceAccountKey.json';
-
-// for sohan:
-// const serviceAccount = require("C:/Users/rayha/Desktop/serviceAccountKey.json");
 
 type ServiceAccount = {
     type: string, 

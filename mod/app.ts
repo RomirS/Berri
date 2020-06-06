@@ -1,6 +1,10 @@
 import { ChatServer } from './utils/chatServer';
+import { Socket } from './utils/socketConfig';
 
-let app = new ChatServer().getApp();
+let chatServer = new ChatServer();
+let app = chatServer.getApp();
+let io = chatServer.getIo();
+new Socket(io);
 
 import { signup, postFeedback, googleSignup, loginAuth, logout, home } from './src/loginActions';
 import { profile, toggleActiveStatus, newPfp } from './src/profile';

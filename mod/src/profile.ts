@@ -1,8 +1,8 @@
 import { Firestore } from '../utils/firestoreConfig';
 import { Request, Response } from 'express';
 const db = Firestore();
-// import formidable from 'formidable';
-// import * as path from 'path';
+import formidable from 'formidable';
+import * as path from 'path';
 
 export function profile(req: Request, res: Response): void {
     const session = req.session as Express.Session;
@@ -65,41 +65,44 @@ export function toggleActiveStatus(req: Request, res: Response): void {
 
 export function newPfp(req: Request, res: Response): void {
     const session = req.session as Express.Session;
-    // if (session.loggedin) {
-    //     var filePath: string;
-    //     new formidable.IncomingForm().parse(req)
-    //         .on('field', (name: string, field: any) => {
-    //             console.log('Field', name, field);
-    //         })
-    //         .on('fileBegin', (name: string, file: { type: string; path: string; }) => {
-    //             let fileName = `${session.userData["email"]}.JPG`;
-    //             filePath = path.resolve('/img', name, fileName);
-    //             if (file.type == 'image/jpeg') file.path = path.resolve(__dirname, '../public/img', name, fileName);
-    //             else console.log('invalid file');
-    //         })
-    //         .on('file', (name: string) => {
-    //             console.log('Uploaded file', name);
-    //         })
-    //         .on('aborted', () => {
-    //             console.error('Request aborted by the user');
-    //         })
-    //         .on('error', (err: any) => {
-    //             console.error('Error', err);
-    //             throw err;
-    //         })
-    //         .on('end', () => {
-    //             let docRef = db.collection('users').doc(session.userData["email"]);
-    //             docRef.get().then(doc => {
-    //                 let data = doc.data() as FirebaseFirestore.DocumentData;
-    //                 data.prof_pic = filePath;
-    //                 session.userData = data;
-    //                 docRef.set(data);
-    //                 return res.redirect('/profile');
-    //             }).catch(err => {
-    //                 console.log('Error getting document', err);
-    //             });
-    //         })
-    // }
+    if (session.loggedin) {
+        var filePath: string;
+        let form = new formidable.IncomingForm();
+        form.on('field', (name: string, field: any) => {
+                console.log('Field', name, field);
+            })
+        form.on('fileBegin', (name: string, file: any) => {
+                let fileName = `${session.userData["email"]}.JPG`;
+                filePath = path.resolve('/img', name, fileName);
+                if (file.type == 'image/jpeg') file.path = path.resolve(__dirname, '../public/img', name, fileName);
+                else console.log('invalid file');
+            })
+        form.on('file', (name: string) => {
+                console.log('Uploaded file', name);
+            })
+        form.on('aborted', () => {
+                console.error('Request aborted by the user');
+            })
+        form.on('error', (err: any) => {
+                console.error('Error', err);
+                throw err;
+            })
+        form.on('end', () => {
+                let docRef = db.collection('users').doc(session.userData["email"]);
+                docRef.get().then(doc => {
+                    let data = doc.data() as FirebaseFirestore.DocumentData;
+                    data.prof_pic = filePath;
+                    session.userData = data;
+                    docRef.set(data);
+                    return res.redirect('/profile');
+                }).catch(err => {
+                    console.log('Error getting document', err);
+                });
+            })
+        form.parse(req, (err: any, fields: any, files: any) => {
+            console.log(err, fields, files)
+        });
+    }
 }
 
 

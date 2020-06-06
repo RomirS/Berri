@@ -1,10 +1,7 @@
 import firebase from 'firebase';
 import { Request, Response } from 'express';
 import { Firestore } from '../utils/firestoreConfig';
-import { Provider } from '../utils/providerConfig';
-
 const db = Firestore();
-const provider = new Provider().getProvider();
 
 export function signup(req: Request, res: Response): void {
     if (req.session!.loggedin) {
@@ -43,7 +40,6 @@ export function postFeedback(req: Request, res: Response): void {
 
 export function googleSignup(req: Request, res: Response): void {
     let id_token = req.body.idToken as string;
-    //Should use provider here, not working
     let credential = firebase.auth.GoogleAuthProvider.credential(id_token);
     firebase.auth().signInWithCredential(credential).then(authResult => {
         const session = req.session as Express.Session;
