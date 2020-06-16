@@ -1,4 +1,5 @@
 import socketIo from 'socket.io';
+import { networkInterfaces, NetworkInterfaceInfo } from 'os';
 import { Firestore } from './firestoreConfig';
 const db = Firestore();
 let formatMessage = require("../helpers/message").formatMessage;
@@ -23,7 +24,13 @@ export class Socket {
                 roomID = chatroom.id;
                 let useremail = chatroom.useremail;
 
+                var clientsInRoom = this.io.sockets.adapter.rooms[roomID];
+                var numClients = clientsInRoom ? Object.keys(clientsInRoom.sockets).length : 0;
+                if (numClients === 2) this.io.to(roomID).emit('isReady');
+
                 socket.removeAllListeners('chatMessage');
+                socket.removeAllListeners('changeStatus');
+                socket.removeAllListeners('message');
 
                 //Listens for chat message and adds message to Firebase
                 let chatRef = db.collection('chatrooms').doc(`${roomID}`);
@@ -81,7 +88,23 @@ export class Socket {
                         });
                     }
                 });
+
+                socket.on('broadcast', function(message) {
+                    socket.to(roomID).broadcast.emit('broadcastReceived', message);
+                });
+
             });
+            
+            // socket.on('ipaddr', function() {
+            //     var ifaces = networkInterfaces();
+            //     for (var dev in ifaces) {
+            //         ifaces?[dev].forEach(function(details) {
+            //             if (details.family === 'IPv4' && details.address !== '127.0.0.1') {
+            //                 socket.emit('ipaddr', details.address);
+            //             }
+            //         });
+            //     }
+            // });
 
             //Runs when user disconnects by leaving message board
             socket.on('disconnect', () => {

@@ -4,9 +4,6 @@ import * as path from 'path';
 import * as bodyParser from 'body-parser';
 import { createServer, Server } from 'http';
 import socketIo from 'socket.io';
-import { Firestore } from '../utils/firestoreConfig';
-const db = Firestore();
-import { formatMessage } from '../helpers/message';
 
 
 export class ChatServer {
@@ -20,7 +17,7 @@ export class ChatServer {
         this.createApp();
         this.createServer();
         this.config();
-        this.sockets();
+        this.setIo();
         this.listen();
     }
 
@@ -51,7 +48,7 @@ export class ChatServer {
         })
     }
 
-    private sockets(): void {
+    private setIo(): void {
         this.io = socketIo(this.server);
     }
 

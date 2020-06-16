@@ -99,22 +99,39 @@ h5 {
 }
 
 .chat-header {
+    display: flex;
     height: 10%;
     padding: 20px;
-    position: relative;
+    align-items: center;
 }
 
 .chat-header img {
-    top: 0px;
     width: 40px;
     height: 40px;
 }
 
 .chat-header h5 {
-    top: 25px;
-    vertical-align: middle;
+    top: unset;
+    position: unset;
     font-size: 25px;
 }
+
+#callButtons {
+    flex: 1;
+    text-align: right;
+}
+
+#callButtons button {
+    all: unset;
+
+    margin: 0;
+    padding: 0 20px 0 0;
+    vertical-align: middle;
+    font-weight: 800;
+    color: rgb(252, 164, 164);
+    cursor: pointer;
+}
+
 
 .chatMessages {
     height: 80%;
@@ -236,4 +253,11 @@ input[type="text"] {
 
 .hidden {
     display: none;
+}
+
+video {
+    position: relative;
+    left: 200px;
+    border-radius: 10px;
+    width: 600px;
 }

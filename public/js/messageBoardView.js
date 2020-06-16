@@ -1,4 +1,4 @@
-const socket = io();
+const socket = io.connect('http://localhost:8000'); 
 
 var userData = document.getElementById('userData').value;
 var tutorChatData = document.getElementById('tutorChatData').value;
