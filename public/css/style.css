@@ -1,3 +1,11 @@
+html {
+    height: 100%;
+}
+
+#root {
+    height: 100vh;
+}
+
 body {
     background: rgb(255, 255, 255);
     font-family: Roboto;
