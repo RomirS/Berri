@@ -1,0 +1,30 @@
+head
+  meta(charset='UTF-8')
+  meta(name='viewport' content='width=device-width, initial-scale=1.0')
+  meta(http-equiv='X-UA-Compatible' content='ie-edge')
+  title #{title}
+  script(src="//code.jquery.com/jquery-3.4.1.min.js")
+  link(rel='stylesheet' type='text/css' href='css/style.css')
+  link(rel='stylesheet' type='text/css' href='css/profile.css')
+  link(rel='stylesheet' type='text/css' href='css/video.css')
+  link(href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700' rel='stylesheet' type='text/css')
+
+
+#videos
+  .videoContainer
+    video#localVideo(autoplay playsinline muted='muted')
+    .buttons
+      button#toggleMute Mute
+      button#toggleVideo Video
+      button#hangupButton Hang Up
+  .videoContainer
+    video#remoteVideo(autoplay playsinline)
+
+p.hidden(id='isInitiator')
+p.hidden(id='signalTo')
+
+script(src="socket.io/socket.io.js")
+script.
+  document.getElementById('isInitiator').value = !{JSON.stringify(isInitiator)};
+  document.getElementById('signalTo').value = !{JSON.stringify(signalTo)};
+script(src="js/video.js")

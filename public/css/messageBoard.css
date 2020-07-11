@@ -249,15 +249,51 @@ input[type="text"] {
 
 #fixedButton {
     width: 170px;
+    z-index: 5;
 }
 
 .hidden {
     display: none;
 }
 
-video {
-    position: relative;
-    left: 200px;
+.notif {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: white;
     border-radius: 10px;
-    width: 600px;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.23), 0 3px 12px rgba(0, 0, 0, 0.16);
+}
+
+#callNotif {
+    width: 400px;
+}
+
+#ringer {
+    width: 200px;
+}
+
+#ringer p {
+    margin: 0;
+    padding: 10px;
+}
+
+.notifButtons {
+    margin: 10px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.notifButtons button {
+    all: unset;
+    margin: auto 25px;
+    cursor: pointer;
+}
+
+#accept {
+    color: greenyellow;
+}
+
+#deny {
+    color: salmon;
 }

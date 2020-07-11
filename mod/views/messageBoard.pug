@@ -29,9 +29,7 @@ head
       //-   .button.top-right(style="width: 200px")
       //-     input(type="submit" value='Delete this user')
       #callButtons
-        button#startButton Start
-        button#callButton Call
-        button#hangupButton Hang Up
+        button#startButton Call
     .chatMessages
     .chat-form-container
       form#chat-form
@@ -40,19 +38,14 @@ head
 form#signupformA(action='/' method='get')
   .button.in-line(id = "fixedButton")
     input(type='submit' value='Return Home')
-#videos
-  video#localVideo(autoplay playsinline)
-  video#remoteVideo(autoplay playsinline)
 
 p.hidden(id='userData')
 p.hidden(id='tutorChatData')
 p.hidden(id='studentChatData')
 
 script(src="socket.io/socket.io.js")
-//- script(src="https://webrtc.github.io/adapter/adapter-latest.js")
 script.
   document.getElementById('userData').value = !{JSON.stringify(userData)};
   document.getElementById('tutorChatData').value = !{JSON.stringify(tutorChatData)};
   document.getElementById('studentChatData').value = !{JSON.stringify(studentChatData)};
 script(src="js/messageBoardView.js")
-script(src="js/video.js")

@@ -1,11 +1,16 @@
 'use strict'
 
-var isChannelReady = false;
-var isStarted = false;
+let isInitiator = document.getElementById('isInitiator').value;
+let signalTo = document.getElementById('signalTo').value;
+
+const socket = io();
 var localStream;
-var pc;
+var pc = new RTCPeerConnection();
 var remoteStream = new MediaStream();
 var turnReady;
+
+var offerAlreadyReceived = false;
+var answerAlreadyReceived = false;
 
 const pcConfig = {
   'iceServers': [{
@@ -24,82 +29,120 @@ var mediaConstraints = {
   audio: true
 }
 
-////////////////////////////////////////////////
-
 function sendMessage(message) {
-  // console.log('Client sending message: ', message);
+  if (!message.to) message.to = signalTo;
   socket.emit('broadcast', message);
 }
 
-// This client receives a message
 socket.on('broadcastReceived', async message => {
-  // console.log('Client received message:', message);
-  if (message.offer) {
-    console.log('received offer')
-    await pc.setRemoteDescription(new RTCSessionDescription(message.offer));
-    doAnswer();
-  } else if (message.answer && isStarted) {
-    await pc.setRemoteDescription(new RTCSessionDescription(message.answer));
-  } else if (message.type === 'candidate' && isStarted) {
-    var candidate = new RTCIceCandidate({
+  if (message.type === 'candidate') {
+  var candidate = new RTCIceCandidate({
       sdpMLineIndex: message.label,
       candidate: message.candidate
-    });
-    pc.addIceCandidate(candidate);
-  } else if (message === 'bye' && isStarted) {
-    handleRemoteHangup();
+  });
+  pc.addIceCandidate(candidate);
+  } else if (message.offer) {
+      console.log('received offer');
+      if (offerAlreadyReceived) return;
+      offerAlreadyReceived = true;
+      doAnswer(message.offer);
+  } else if (message.answer) {
+      if (answerAlreadyReceived) return;
+      answerAlreadyReceived = true;
+      await pc.setRemoteDescription(message.answer);
+  } else if (message.bye) {
+      handleRemoteHangup();
+  } else if (message.denied) {
+      stop();
   }
 });
 
-socket.on('isReady', () => {
-  isChannelReady = true;
-});
+window.onload = async () => {
+  socket.emit('joinRoom', signalTo);
+  await setLocalVideo();
+  await createPeerConnection(pcConfig);
+  await addTracks();
+  if (isInitiator == 'false') doOffer();
+};
 
-/////////////////////////////////////////////
-
-const startButton = document.getElementById('startButton');
-const callButton = document.getElementById('callButton');
 const hangupButton = document.getElementById('hangupButton');
-
-startButton.addEventListener('click', startAction);
-callButton.addEventListener('click', callAction);
 hangupButton.addEventListener('click', hangupAction);
-
-callButton.disabled = true;
 hangupButton.disabled = true;
 
 var localVideo = document.querySelector('#localVideo');
 var remoteVideo = document.querySelector('#remoteVideo');
 
-createPeerConnection(pcConfig);
-
-async function startAction() {
-  startButton.disabled = true;
+async function setLocalVideo() {
+  hangupButton.disabled = false;
   localStream = await navigator.mediaDevices.getUserMedia(mediaConstraints);
   localVideo.srcObject = localStream;
-  callButton.disabled = false;
 }
 
-async function callAction() {
-  if (!isStarted && typeof localStream !== 'undefined' && isChannelReady) {
-    isStarted = true;
-    hangupButton.disabled = false;
-    localStream.getTracks().forEach(function(track) {
-      pc.addTrack(track, localStream);
-    });
-    const offer = await pc.createOffer();
-    await pc.setLocalDescription(offer);
-    sendMessage({'offer': offer});
-  } else {
-    console.log('channel ready:', isChannelReady);
-    console.log('isStarted: ', isStarted);
-  }
+async function addTracks() {
+  localStream.getTracks().forEach(function(track) {
+    pc.addTrack(track, localStream);
+  });
+}
+
+async function doOffer() {
+  const offer = await pc.createOffer();
+  await pc.setLocalDescription(offer);
+  sendMessage({'offer': offer});
+}
+
+async function doAnswer(offer) {
+  await pc.setRemoteDescription(offer);
+  const answer = await pc.createAnswer();
+  await pc.setLocalDescription(answer);
+  sendMessage({'answer': answer});
+}
+
+$('#toggleMute').click(() => {
+  toggleTrack(localStream, 'audio')
+})
+
+$('#toggleVideo').click(() => {
+  toggleTrack(localStream, 'video')
+})
+
+function toggleTrack(stream, type) {
+  stream.getTracks().forEach((track) => {
+      if (track.kind === type) {
+          track.enabled = !track.enabled;
+      }
+  });
 }
 
 function hangupAction() {
-  console.log('Hanging up.');
+  sendMessage({bye: true});
+  closeCall();
+}
+
+function handleRemoteHangup() {
+  closeCall();
+}
+
+function closeCall() {
+  let to = signalTo.substring(0, signalTo.indexOf('+call'));
+  sendMessage({'to': to, 'callFinished': true});
   stop();
-  sendMessage('bye');
+}
+
+function stop() {
+  localStream.getTracks().forEach(function(track) {
+    track.stop();
+  });
+  localStream = null;
+  localVideo.srcObject = null;
+  remoteStream.getTracks().forEach(function(track) {
+    track.stop();
+  });
+  remoteStream = new MediaStream();
+  remoteVideo.srcObject = null;
+
+  pc.close();
+  pc = null;
+  window.close();
 }
 
 /////////////////////////////////////////////////////////
@@ -107,16 +150,14 @@ function hangupAction() {
 async function createPeerConnection(config) {
   try {
     pc = new RTCPeerConnection(config);
+
     pc.addEventListener('icecandidate', handleIceCandidate);
     pc.addEventListener('track', async (event) => {
       remoteStream.addTrack(event.track, remoteStream);
       remoteVideo.srcObject = remoteStream;
     });
-    pc.onremovestream = handleRemoteStreamRemoved;
-    console.log('Created RTCPeerConnnection');
   } catch (e) {
     console.log('Failed to create PeerConnection, exception: ' + e.message);
-    alert('Cannot create RTCPeerConnection object.');
     return;
   }
 }
@@ -134,48 +175,10 @@ function handleIceCandidate(event) {
   }
 }
 
-function handleRemoteStreamRemoved(event) {
-  console.log('Remote stream removed. Event: ', event);
-}
-
-async function doAnswer() {
-  console.log('Sending answer to peer.');
-  const answer = await pc.createAnswer();
-  await pc.setLocalDescription(answer);
-  sendMessage({'answer': answer});
-  // pc.createAnswer().then(
-  //   setLocalAndSendMessage,
-  //   onCreateSessionDescriptionError
-  // );
-}
-
-function setLocalAndSendMessage(sessionDescription) {
-  pc.setLocalDescription(sessionDescription);
-  console.log('setLocalAndSendMessage sending message', sessionDescription);
-  sendMessage(sessionDescription);
-}
-
-function onCreateSessionDescriptionError(error) {
-  trace('Failed to create session description: ' + error.toString());
-}
-
-function handleRemoteHangup() {
-  console.log('Session terminated.');
-  stop();
-}
-
-function stop() {
-  isChannelReady = false;
-  isStarted = false;
-  hangupButton.disabled = true;
-  callButton.disabled = true;
-  pc.close();
-  pc = null;
-}
-
 ////////////////////////////////////////////////////
 
 if (location.hostname !== 'localhost') {
+  console.log('requesting turn')
   requestTurn(
     'https://computeengineondemand.appspot.com/turn?username=41784574&key=4080218913'
   );
@@ -211,5 +214,5 @@ function requestTurn(turnURL) {
 }
 
 window.onbeforeunload = function() {
-  sendMessage('bye');
+  hangupAction();
 };

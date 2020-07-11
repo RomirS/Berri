@@ -11,6 +11,7 @@ import { profile, toggleActiveStatus, newPfp } from './src/profile';
 import { becomeTutor, saveNewTutor } from './src/becomeTutorActions';
 import { foundTutors, searchTutor, chooseTutor, retryTutor, tutorProfiles, noTutorFound } from './src/findTutorActions';
 import { messageBoard, deleteUser } from './src/messageBoard';
+import { readyVideo, videoChat } from './src/videoChat';
 
 //Logins
 app
@@ -39,3 +40,7 @@ app
 //Message Board
 .post('/messageBoard', messageBoard)
 .post('/deleteUser', deleteUser)
+
+//VideoChat
+.post('/readyVideo', readyVideo)
+.get('/videoChat', videoChat)

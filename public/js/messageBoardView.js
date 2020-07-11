@@ -1,4 +1,4 @@
-const socket = io.connect('http://localhost:8000'); 
+const socket = io(); 
 
 var userData = document.getElementById('userData').value;
 var tutorChatData = document.getElementById('tutorChatData').value;
@@ -239,4 +239,115 @@ function rearrangeChats(message) {
         if (divEl.id == message.room) divEl.style.order = 0;
         else divEl.style.order = (parseInt(divEl.style.order) + 1);
     }
+}
+
+var isStarted;
+var isInitiator = false;
+var doNotDeny = true;
+var signalTo;
+var notifAlreadyReceived = false;
+var denyReceived = false;
+
+function sendMessage(message) {
+    if (!message.to) message.to = signalTo;
+    if (message.notif) message.sender = userData.first + ' ' + userData.last;
+    socket.emit('broadcast', message);
+}
+
+socket.on('broadcastReceived', async message => {
+    if (message.notif) {
+        if (notifAlreadyReceived) return;
+        notifAlreadyReceived = true;
+        signalTo = message.to;
+        createNotif(message);
+    } else if (message.notifAccepted) {
+        doNotDeny = true;
+        removeRinger();
+    } else if (message.notifDenied) {
+        if (denyReceived) return;
+        denyReceived = true;
+        callIsDenied();
+    } else if (message.callFinished) {
+        if (!isStarted) return;
+        isStarted = false;
+        console.log('hungup!');
+        isInitiator = false;
+        startButton.disabled = false;
+    }
+});
+
+const startButton = document.getElementById('startButton');
+startButton.addEventListener('click', startAction);
+async function startAction() {
+    isInitiator = true;
+    startButton.disabled = true;
+    doNotDeny = false;
+    createRinger();
+    setTimeout(callIsDenied, 10000);
+
+    signalTo = currentRef.id;
+    sendMessage({notif: true});
+
+    transferData();
+}
+
+function transferData() {
+    isStarted = true;
+    let payload = {
+        'isInitiator': isInitiator, 
+        'signalTo': signalTo + '+call'
+    }
+
+    $.ajax({
+        type: "POST",
+        url: "readyVideo",
+        data: payload,
+        dataType: "json",
+        success: function(data, textStatus) {
+            window.open(data.url, 'popUpWindow','height=700,width=1000,left=100,top=100,resizable=yes,scrollbars=yes,toolbar=yes,menubar=no,location=no,directories=no, status=yes');
+        }
+    });
+}
+
+function createRinger() {
+  let RINGER = $(`<div class="notif" id="ringer"><p>Ringing...</p></div>`);
+  $('body').append(RINGER);
+}
+
+function createNotif(offerMessage) {
+    let NOTIF = $(`<div class="notif" id="callNotif"><p>${offerMessage.sender} would like to call...</p><div class="notifButtons"><button id="accept">Accept</button><button id="deny">Deny</button></div></div>`);
+    $('body').append(NOTIF);
+
+    $('#accept').click(async function() {
+        removeNotif();
+        sendMessage({notifAccepted: true});
+        transferData();
+    });
+    $('#deny').click(denyCall);
+    setTimeout(removeNotif, 10000);
+
+    function denyCall() {
+        signalTo = currentRef.id;
+        removeNotif();
+        sendMessage({notifDenied: true});
+    }
+
+    function removeNotif() {
+        $('#callNotif').remove();
+        notifAlreadyReceived = false;
+    }
+}
+
+function callIsDenied() {
+    if (doNotDeny) return;
+    doNotDeny = true;
+    removeRinger();
+    sendMessage({'to': signalTo + '+call', 'denied': true});
+
+    isInitiator = false;
+    startButton.disabled = false;
+}
+
+function removeRinger() {
+    $('#ringer').remove();
 }

@@ -15,11 +15,11 @@ export class Socket {
     private listen(): void {
         this.io.on('connection', (socket) => {
             var roomID: string;
-            //Joins each chat that user is a part of
+            
             socket.on('joinRoom', newID => {
-                socket.join(newID)
+                socket.join(newID);
             });
-            //Sets current room ID to access Firebase and when user sends message
+            
             socket.on('currentRoom', chatroom => {
                 roomID = chatroom.id;
                 let useremail = chatroom.useremail;
@@ -32,9 +32,7 @@ export class Socket {
                 socket.removeAllListeners('changeStatus');
                 socket.removeAllListeners('message');
 
-                //Listens for chat message and adds message to Firebase
                 let chatRef = db.collection('chatrooms').doc(`${roomID}`);
-
                 chatRef.get().then(doc => {
                     var cont = true;
                     let data = doc.data() as FirebaseFirestore.DocumentData;
@@ -88,11 +86,14 @@ export class Socket {
                         });
                     }
                 });
+            });
 
-                socket.on('broadcast', function(message) {
-                    socket.to(roomID).broadcast.emit('broadcastReceived', message);
-                });
+            socket.on('broadcast', (message) => {
+                socket.to(message.to).broadcast.emit('broadcastReceived', message);
+            });
 
+            socket.on('disconnect', () => {
+                // console.log(`DISCONNECTED! from ${roomID}`)
             });
             
             // socket.on('ipaddr', function() {
@@ -105,11 +106,6 @@ export class Socket {
             //         });
             //     }
             // });
-
-            //Runs when user disconnects by leaving message board
-            socket.on('disconnect', () => {
-                console.log(`DISCONNECTED! from ${roomID}`)
-            });
         });
     }
 }
