@@ -269,11 +269,11 @@ input[type="text"] {
     width: 400px;
 }
 
-#ringer {
+.ringer {
     width: 200px;
 }
 
-#ringer p {
+.ringer p {
     margin: 0;
     padding: 10px;
 }

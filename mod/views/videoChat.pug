@@ -13,12 +13,30 @@ head
 #videos
   .videoContainer
     video#localVideo(autoplay playsinline muted='muted')
-    .buttons
-      button#toggleMute Mute
-      button#toggleVideo Video
-      button#hangupButton Hang Up
   .videoContainer
     video#remoteVideo(autoplay playsinline)
+  .buttons
+    button#toggleMute
+      <svg viewBox="0 0 64 103" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path fill="#fff" d="M16.579 17.081h32.219V59.54H16.579z"/>
+        <ellipse cx="32.688" cy="17.325" rx="16.11" ry="17.325" fill="#fff"/>
+        <ellipse cx="32.688" cy="59.297" rx="16.11" ry="17.325" fill="#fff"/>
+        <path d="M54.282 102h-45.2a1.564 1.564 0 110-3.128h20.904v-13.51a1.908 1.908 0 113.815 0v13.51h20.481a1.564 1.564 0 010 3.128z" fill="#fff"/>
+        <path d="M33.801 98.872H9.081c-.864 0-1.564.7-1.564 1.564v0c0 .864.7 1.564 1.564 1.564h45.201c.864 0 1.564-.7 1.564-1.564v0c0-.864-.7-1.564-1.564-1.564H29.986m3.815 0v-13.51a1.908 1.908 0 00-1.908-1.907v0a1.908 1.908 0 00-1.907 1.907v13.51m3.815 0h-3.815" stroke="#fff"/>
+        <path d="M5 61.005v0c0 12.398 10.051 22.45 22.45 22.45H36.417c12.399 0 22.45-10.052 22.45-22.45v0" stroke="#fff" stroke-width="9"/>
+        <rect width="5.487" height="96.091" rx="2.743" transform="matrix(.84164 -.54004 .56386 .82587 5 6.867)" fill="#fff"/>
+      </svg>
+    button#toggleVideo
+      <svg viewBox="0 0 123 106" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="7.218" height="137.729" rx="3.609" transform="matrix(.67625 -.73668 .68897 .72479 5.065 5.317)" fill="#fff"/>
+        <rect y="20.331" width="87.997" height="65.061" rx="15" fill="#fff"/>
+        <path d="M115.003 21.264l-18.805 10.84a5 5 0 00-2.503 4.332V70.7a5 5 0 002.428 4.288l18.805 11.282c3.332 2 7.572-.401 7.572-4.288V25.596c0-3.847-4.164-6.253-7.497-4.332z" fill="#fff"/>
+      </svg>
+    button#hangupButton
+      <svg viewBox="7 5 150 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M10.97 6.92a4 4 0 013.302-2.742L42.493.575A4 4 0 0147 4.543V37a4 4 0 01-4 4H5.49c-2.713 0-4.64-2.643-3.808-5.226L10.971 6.92zM119 4.657a4 4 0 014.603-3.954l32 4.883a4 4 0 013.303 3.096l6.028 27.46A4 4 0 01161.027 41H123a4 4 0 01-4-4V4.657z" fill="#fff"/>
+        <rect x="41" width="84" height="24" rx="5" fill="#fff"/>
+      </svg>
 
 p.hidden(id='isInitiator')
 p.hidden(id='signalTo')

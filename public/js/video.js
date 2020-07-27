@@ -42,7 +42,6 @@ socket.on('broadcastReceived', async message => {
   });
   pc.addIceCandidate(candidate);
   } else if (message.offer) {
-      console.log('received offer');
       if (offerAlreadyReceived) return;
       offerAlreadyReceived = true;
       doAnswer(message.offer);
@@ -53,7 +52,8 @@ socket.on('broadcastReceived', async message => {
   } else if (message.bye) {
       handleRemoteHangup();
   } else if (message.denied) {
-      stop();
+      hangupReceived = true;
+      window.close();
   }
 });
 
@@ -98,35 +98,60 @@ async function doAnswer(offer) {
 }
 
 $('#toggleMute').click(() => {
-  toggleTrack(localStream, 'audio')
+  toggleTrack(localStream, 'audio', $('#toggleMute svg'))
 })
 
 $('#toggleVideo').click(() => {
-  toggleTrack(localStream, 'video')
+  toggleTrack(localStream, 'video', $('#toggleVideo svg'))
 })
 
-function toggleTrack(stream, type) {
+function toggleTrack(stream, type, e) {
   stream.getTracks().forEach((track) => {
       if (track.kind === type) {
           track.enabled = !track.enabled;
+          if (track.enabled) {
+            e.children().each(function() {
+              $(this).attr('fill', 'white');
+              if ($(this).attr('stroke')) $(this).attr('stroke', 'white');
+              else $(this).attr('fill', 'white');
+            });
+          } else {
+            e.children().each(function() {
+              if ($(this).attr('stroke')) $(this).attr('stroke', 'rgb(252, 123, 123)');
+              else $(this).attr('fill', 'rgb(252, 123, 123)');
+            });
+          }
       }
   });
 }
 
+var hangupPressed = false;
+var hangupReceived = false;
+
 function hangupAction() {
+  hangupPressed = true;
   sendMessage({bye: true});
   closeCall();
 }
 
 function handleRemoteHangup() {
+  hangupReceived = true;
   closeCall();
 }
 
 function closeCall() {
   let to = signalTo.substring(0, signalTo.indexOf('+call'));
   sendMessage({'to': to, 'callFinished': true});
-  stop();
+  window.close();
 }
+
+window.onbeforeunload = function() {
+  if (!hangupPressed && !hangupReceived) {
+    hangupAction();
+    return;
+  }
+  stop();
+};
 
 function stop() {
   localStream.getTracks().forEach(function(track) {
@@ -142,7 +167,6 @@ function stop() {
 
   pc.close();
   pc = null;
-  window.close();
 }
 
 /////////////////////////////////////////////////////////
@@ -212,7 +236,3 @@ function requestTurn(turnURL) {
     xhr.send();
   }
 }
-
-window.onbeforeunload = function() {
-  hangupAction();
-};

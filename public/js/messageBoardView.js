@@ -270,9 +270,11 @@ socket.on('broadcastReceived', async message => {
     } else if (message.callFinished) {
         if (!isStarted) return;
         isStarted = false;
-        console.log('hungup!');
         isInitiator = false;
         startButton.disabled = false;
+        doNotDeny = true;
+        createRinger('Call ended');
+        setTimeout(removeRinger, 3000);
     }
 });
 
@@ -282,7 +284,7 @@ async function startAction() {
     isInitiator = true;
     startButton.disabled = true;
     doNotDeny = false;
-    createRinger();
+    createRinger('Ringing...');
     setTimeout(callIsDenied, 10000);
 
     signalTo = currentRef.id;
@@ -309,8 +311,8 @@ function transferData() {
     });
 }
 
-function createRinger() {
-  let RINGER = $(`<div class="notif" id="ringer"><p>Ringing...</p></div>`);
+function createRinger(text) {
+  let RINGER = $(`<div class="notif ringer"><p>${text}</p></div>`);
   $('body').append(RINGER);
 }
 
@@ -346,8 +348,12 @@ function callIsDenied() {
 
     isInitiator = false;
     startButton.disabled = false;
+    createRinger('Call was not answered');
+    setTimeout(removeRinger, 3000)
 }
 
 function removeRinger() {
-    $('#ringer').remove();
+    $('.ringer').each(function() {
+        $(this).remove();
+    });
 }

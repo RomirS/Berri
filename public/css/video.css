@@ -1,15 +1,31 @@
-.videoContainer {
+body {
+    margin: 0;
+}
+
+svg {
+    overflow: visible;
+    width: 100%;
+    height: 100%;
+}
+
+#videos {
     position: relative;
+    height: 300px;
+}
+
+.videoContainer {
+    position: absolute;
+    margin: 0;
 }
 
 .videoContainer:first-of-type {
+    margin: 8px;
     width: 30%;
     z-index: 2;
 }
 
-.videoCOntainer:last-of-type {
+.videoContainer:nth-last-of-type(2) {
     width: 100%;
-    height: 100%;
     z-index: 1;
 }
 
@@ -20,19 +36,36 @@
     width: 100%;
 }
 
-.videoContainer .buttons {
-    display: block;
-    position: absolute;
-    width: 100%;
-    top: 80%;
-    text-align: center;
-    z-index: 3;
+.videoContainer:first-of-type video {
+    margin: 8px;
+    border-radius: 10px;
 }
 
-.videoContainer:first-of-type:hover .buttons {
-    display: block;
+#videos .buttons {
+    position: fixed;
+    padding-top: 50px;
+    width: 100%;
+    text-align: center;
+    z-index: 3;
+    transform: translateY(500%);
 }
 
 .buttons button {
+    display: none;
+    all: unset;
+    background: rgba(61, 61, 61, 0.712);
     margin: 10px;
+    padding: 10px;
+    border-radius: 50%;
+    width: 2.5vw;
+    height: 2.5vw;
+    cursor: pointer;
+}
+
+.buttons:hover button {
+    display: block;
+}
+
+#hangupButton {
+    background: rgba(255, 83, 83, 0.877);
 }
