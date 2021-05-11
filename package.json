@@ -30,7 +30,7 @@
         "socket.io": "^2.3.0",
         "ts-node": "^8.10.2",
         "websocket-extensions": "^0.1.4",
-        "lodash": ">=4.17.19"
+        "lodash": ">=4.17.21"
     },
     "devDependencies": {
         "@types/express": "^4.17.6",
